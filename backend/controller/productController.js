@@ -1,8 +1,8 @@
-const products = require("../models/productModel")
+const Product= require("../models/productModel")
 const getProducts = async (req,res) => {
     try{
-        const Products = await products.find({});
-        res.send(200).json(Products);
+        const products = await Product.find({});
+        res.status(200).json(products);
     } catch ( error) {
         res.status(500).json({ message : "server error", error: error.message});
     }
@@ -11,11 +11,11 @@ const getProducts = async (req,res) => {
 const getProductsById = async (req,res) => {
     try{
         const productId = req.params.id;
-        const Product = await products.findById(productId);
-        if (!Product) {
+        const product = await Product.findById(productId);
+        if (!product) {
             return res.status(404).json({ message: "Product not found" }); 
           }
-        res.send(200).json(Product);
+        res.status(200).json(product);
     } catch ( error) {
         res.status(500).json({ message : "server error", error: error.message});
     }
@@ -23,10 +23,12 @@ const getProductsById = async (req,res) => {
 
 const getProductsByCategory = async (req,res) =>{
     try{
-        const { category } = req.query; 
-        const filter = category ? { category } : {};
-        const Products = await products.find(filter);
-        if (Products.length === 0) {
+        const { categoryname } = req.params; 
+        if (!categoryname) {
+            return res.status(400).json({ message: "Category parameter is missing" });
+        }
+        const products = await Product.find({ category: categoryname});
+        if (products.length === 0) {
             return res.status(404).json({ message: "No products found in this category" });
         }
         res.status(200).json(products);
@@ -35,4 +37,28 @@ const getProductsByCategory = async (req,res) =>{
     }
 }
 
-module.exports = { getProducts , getProductsById, getProductsByCategory}
+const searchProducts = async (req,res) => {
+    try{
+        const { keyword } = req.query;
+        if ( !keyword ) {
+            return res.status(400).json({ message: "Search keyword is missing" });
+        }
+        const products = await Product.find({
+            $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { description: { $regex: keyword, $options: "i" } },
+                { category: { $regex: keyword, $options: "i" } }
+            ]
+        });
+
+        if (products.length === 0) {
+            return res.status(404).json({ message: "No products found matching the search" });
+        }
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+
+}
+
+module.exports = { getProducts , getProductsById, getProductsByCategory, searchProducts}
