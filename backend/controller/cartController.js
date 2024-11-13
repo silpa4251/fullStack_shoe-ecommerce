@@ -117,8 +117,8 @@ const totalProducts = async (req, res) => {
         if (!cart) {
             return res.status(404).json({ message: "Cart not found" });
         }
-        const totalProducts = cart.products.length;
-        res.status(200).json({ totalProducts });
+        const totalItems = cart.products.length;
+        res.status(200).json({ totalItems });
     } catch (error) {
         res.status(500).json({ message: "Server error", error: error.message });
     }

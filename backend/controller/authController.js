@@ -1,11 +1,16 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { generateToken } = require("../utils/jwt")
+const { registerValidation, loginValidation } = require("../validations/userValidations");
+
 
 const register = async (req,res) =>{
+    const { error } = registerValidation(req.body);
+    if (error) return res.status(400).json({ message: error.details[0].message });
+
     try{
         
-        const {username , email , password , profileimg} = req.body;
+        const {username , email , password , role } = req.body;
 
         if (!username || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
@@ -17,10 +22,10 @@ const register = async (req,res) =>{
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        const newuser = new User ({ username , email , password : hashedPassword , profileimg });
+        const newuser = new User ({ username , email , password : hashedPassword , role });
         await newuser.save();
 
-        const token = jwt.sign({ userId : newuser._id} , process.env.ACCESS_TOKEN_SECRET,{expiresIn : process.env.JWT_EXPIRES_IN});
+        const token = generateToken(newuser._id ,newuser.role);
         res.status(201).json({ message : "User registered successfully" , token});
 
     } catch (error) {
@@ -29,8 +34,11 @@ const register = async (req,res) =>{
     }
 }
 const login =  async (req,res) => {
+    const { error } = loginValidation(req.body);
+    if (error) return res.status(400).json({ message: error.details[0].message });
+    
     try{
-        const {email,password} = req.body;
+        const {email,password } = req.body;
         const user = await User.findOne({email});
         if(!user){
             return res.status(400).json({ meassage: "Invaild credentials"});
@@ -41,7 +49,7 @@ const login =  async (req,res) => {
             return res.status(400).json({ message : "Invalid credentials"});
         }
 
-        const token = jwt.sign({ userId : user._id} , process.env.ACCESS_TOKEN_SECRET , {expiresIn: process.env.JWT_EXPIRES_IN});
+        const token = generateToken(user._id ,user.role);
         res.json({ message : "Logged in successfully" , token});
         
     } catch(error) {

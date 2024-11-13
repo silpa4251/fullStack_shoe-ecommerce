@@ -3,36 +3,45 @@ const Product = require("../models/productModel")
 const Cart = require("../models/cartModel")
 
 
-const addToWishlist = async (req,res) => {
-    try{
+const addToWishlist = async (req, res) => {
+    try {
         const userId = req.params.id;
-        const { productId, quantity} = req.body;
+        const { productId } = req.body;
+    
         const product = await Product.findById(productId);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
+        
         let wishlist = await Wishlist.findOne({ userId });
         if (!wishlist) {
             wishlist = new Wishlist({
                 userId,
-                products: [{ productId}],
+                products: [{ productId }]
             });
-        } else {
-            const existingProduct = wishlist.products.findIndex((item) => item.productId.toString() === productId);
-            if (existingProduct !== -1) {
-                wishlist.products[existingProduct].quantity += quantity;
-            } else {
-                wishlist.products.push({ productId, quantity });
-            }
-
+            await wishlist.save();
+            return res.status(200).json({ message: 'Product added to wishlist', wishlist });
         }
-        await wishlist.save();
-        res.status(200).json({ message: 'Product added to wishlist successfully', wishlist});
+
+        const existingProductIndex = wishlist.products.findIndex(
+            (item) => item.productId.toString() === productId
+        );
+
+        if (existingProductIndex !== -1) {
+            wishlist.products.splice(existingProductIndex, 1);
+            await wishlist.save();
+            return res.status(200).json({ message: 'Product removed from wishlist', wishlist });
+        } else {
+            wishlist.products.push({ productId });
+            await wishlist.save();
+            return res.status(200).json({ message: 'Product added to wishlist successfully', wishlist });
+        }
 
     } catch (error) {
-        res.status(500).json({message : "Server error" , error: error.message})
+        res.status(500).json({ message: "Server error", error: error.message });
     }
-}
+};
+
 
 const viewWishlist  = async (req,res) => {
     try{
@@ -121,4 +130,4 @@ const removeFromWishlist = async (req,res) => {
     }
 };
 
-module.exports = {addToWishlist , viewWishlist, removeFromWishlist ,moveProductToCart, clearWishlist};
+module.exports = {addToWishlist , viewWishlist, removeFromWishlist ,moveProductToCart,  clearWishlist}
