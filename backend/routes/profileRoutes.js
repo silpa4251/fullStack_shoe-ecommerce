@@ -7,9 +7,7 @@ const authorize = require("../middlewares/authorize");
 router.use(auth);
 router.use(authorize("user"));
 
-
 router.get("/:id", viewProfile);
 router.put("/:id", editProfile);
-
 
 module.exports = router;
