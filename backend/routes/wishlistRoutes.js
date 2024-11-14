@@ -11,9 +11,11 @@ const auth = require("../middlewares/auth");
 
 router.use(auth);
 
-router.post("/:id", addToWishlist);
-router.get("/:id", viewWishlist);
-router.delete("/:id", removeFromWishlist);
+router.route("/:id")
+  .post(addToWishlist)
+  .get(viewWishlist)
+  .delete(removeFromWishlist);
+  
 router.post("/:id/addtocart", moveProductToCart);
 router.get("/:id/clear", clearWishlist);
 

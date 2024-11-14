@@ -13,10 +13,12 @@ const auth = require("../middlewares/auth");
 
 router.use(auth);
 
-router.post("/:id", addToCart);
-router.get("/:id", viewCart);
-router.delete("/:id", removeFromCart);
-router.put("/:id", updateCartQuantity);
+router.route("/:id")
+  .post(addToCart)
+  .get(viewCart)
+  .delete(removeFromCart)
+  .put(updateCartQuantity);
+
 router.get("/:id/totalprice", cartTotal);
 router.get("/:id/totalitems", totalProducts);
 router.get("/:id/clear", clearCart);
