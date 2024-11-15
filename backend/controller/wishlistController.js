@@ -9,7 +9,7 @@ const addToWishlist = async (req, res) => {
 
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({  status:"failed",message: "Product not found"});
     }
 
     let wishlist = await Wishlist.findOne({ userId });
@@ -21,7 +21,7 @@ const addToWishlist = async (req, res) => {
       await wishlist.save();
       return res
         .status(200)
-        .json({ message: "Product added to wishlist", wishlist });
+        .json({  status:"success",message: "Product added to wishlist", data:wishlist });
     }
 
     const existingProductIndex = wishlist.products.findIndex(
@@ -33,16 +33,16 @@ const addToWishlist = async (req, res) => {
       await wishlist.save();
       return res
         .status(200)
-        .json({ message: "Product removed from wishlist", wishlist });
+        .json({  status:"success",message: "Product removed from wishlist", data:wishlist });
     } else {
       wishlist.products.push({ productId });
       await wishlist.save();
       return res
         .status(200)
-        .json({ message: "Product added to wishlist successfully", wishlist });
+        .json({  status:"success",message: "Product added to wishlist successfully",data: wishlist });
     }
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({  status:"failed",error: error.message });
   }
 };
 
@@ -54,12 +54,12 @@ const viewWishlist = async (req, res) => {
       "name price brand"
     );
     if (!wishlist) {
-      return res.status(404).json({ message: "Wishlist not found" });
+      return res.status(404).json({  status:"failed",message: "Wishlist not found" });
     }
 
-    res.status(200).json({ wishlist });
+    res.status(200).json({  status:"failed",data:wishlist });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({  status:"failed",error: error.message });
   }
 };
 
@@ -69,19 +69,19 @@ const removeFromWishlist = async (req, res) => {
     const { productId } = req.body;
     let wishlist = await Wishlist.findOne({ userId });
     if (!wishlist) {
-      res.status(404).json({ message: " Wishlist not found" });
+      res.status(404).json({  status:"failed",message: " Wishlist not found" });
     }
     const initialLength = wishlist.products.length;
     wishlist.products = wishlist.products.filter(
       (item) => item.productId.toString() !== productId
     );
     if (wishlist.products.length === initialLength) {
-      return res.status(404).json({ message: "Product not found in wishlist" });
+      return res.status(404).json({  status:"failed",message: "Product not found in wishlist" });
     }
     await wishlist.save();
-    res.status(200).json({ message: "Product removed from the  wishlist" });
+    res.status(200).json({  status:"success",message: "Product removed from the  wishlist" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({  status:"failed", error: error.message });
   }
 };
 
@@ -91,17 +91,17 @@ const moveProductToCart = async (req, res) => {
     const { productId } = req.body;
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({  status:"failed",message: "Product not found" });
     }
     let wishlist = await Wishlist.findOne({ userId });
     if (!wishlist) {
-      return res.status(404).json({ message: "Wishlist not found" });
+      return res.status(404).json({  status:"failed",message: "Wishlist not found" });
     }
     const wishlistItemIndex = wishlist.products.findIndex(
       (item) => item.productId.toString() === productId
     );
     if (wishlistItemIndex === -1) {
-      return res.status(404).json({ message: "Product not in wishlist" });
+      return res.status(404).json({  status:"failed",message: "Product not in wishlist" });
     }
     let cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -124,10 +124,9 @@ const moveProductToCart = async (req, res) => {
 
     res
       .status(200)
-      .json({ message: "Product moved from wishlist to cart", cart });
+      .json({  status:"success",message: "Product moved from wishlist to cart",data: cart });
   } catch (error) {
-    console.error("Error moving product to cart:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({  status:"failed",error: error.message });
   }
 };
 
@@ -136,14 +135,14 @@ const clearWishlist = async (req, res) => {
     const userId = req.params.id;
     const wishlist = await Wishlist.findOne({ userId });
     if (!wishlist) {
-      return res.status(404).json({ message: "Wishlist not found" });
+      return res.status(404).json({  status:"failed",message: "Wishlist not found" });
     }
 
     wishlist.products = [];
     await wishlist.save();
-    res.status(200).json({ message: "Wishlist cleared", wishlist });
+    res.status(200).json({  status:"success",message: "Wishlist cleared", wishlist });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({  status:"failed",error: error.message });
   }
 };
 

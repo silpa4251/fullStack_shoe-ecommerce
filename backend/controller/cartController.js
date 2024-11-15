@@ -7,7 +7,7 @@ const addToCart = async (req, res) => {
     const { productId, quantity } = req.body;
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ status:"failed",message: "Product not found" });
     }
     let cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -28,9 +28,9 @@ const addToCart = async (req, res) => {
     await cart.save();
     res
       .status(200)
-      .json({ message: "Product added to cart successfully", cart });
+      .json({ status:"success",message: "Product added to cart successfully", data: cart });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed", error: error.message });
   }
 };
 
@@ -42,12 +42,12 @@ const viewCart = async (req, res) => {
       "name price brand"
     );
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ status:"failed",message: "Cart not found" });
     }
 
-    res.status(200).json({ cart });
+    res.status(200).json({ status:"success", data:cart });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed",error: error.message });
   }
 };
 
@@ -57,15 +57,15 @@ const removeFromCart = async (req, res) => {
     const { productId } = req.body;
     let cart = await Cart.findOne({ userId });
     if (!cart) {
-      res.status(404).json({ message: "Cart not found" });
+      res.status(404).json({ status:"failed",message: "Cart not found" });
     }
     cart.products = cart.products.filter(
       (item) => item.productId.toString() !== productId
     );
     await cart.save();
-    res.status(200).json({ message: "Product removed from the cart" });
+    res.status(200).json({ status:"success",message: "Product removed from the cart" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed", error: error.message });
   }
 };
 
@@ -74,12 +74,12 @@ const updateCartQuantity = async (req, res) => {
     const userId = req.params.id;
     const { productId, quantity } = req.body;
     if (quantity < 1) {
-      return res.status(400).json({ message: "Quantity must be at least 1" });
+      return res.status(400).json({ status:"failed",message: "Quantity must be at least 1" });
     }
 
     let cart = await Cart.findOne({ userId });
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ status:"failed",message: "Cart not found" });
     }
 
     const existingProduct = cart.products.findIndex(
@@ -87,14 +87,14 @@ const updateCartQuantity = async (req, res) => {
     );
 
     if (existingProduct === -1) {
-      return res.status(404).json({ message: "Product not in cart" });
+      return res.status(404).json({status:"failed", message: "Product not in cart" });
     }
 
     cart.products[existingProduct].quantity = quantity;
     await cart.save();
-    res.status(200).json({ message: "Cart updated", cart });
+    res.status(200).json({ status:"success", message: "Cart updated", data: cart });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed", error: error.message });
   }
 };
 
@@ -104,7 +104,7 @@ const cartTotal = async (req, res) => {
     const cart = await Cart.findOne({ userId }).populate("products.productId");
 
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ status:"failed", message: "Cart not found" });
     }
 
     let totalPrice = 0;
@@ -112,9 +112,9 @@ const cartTotal = async (req, res) => {
       totalPrice += item.productId.price * item.quantity;
     });
 
-    res.status(200).json({ totalPrice });
+    res.status(200).json({ status:"success",data: totalPrice });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed", error: error.message });
   }
 };
 
@@ -123,12 +123,12 @@ const totalProducts = async (req, res) => {
     const userId = req.params.id;
     const cart = await Cart.findOne({ userId });
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ status:"failed", message: "Cart not found" });
     }
     const totalItems = cart.products.length;
-    res.status(200).json({ totalItems });
+    res.status(200).json({ status:"success",data: totalItems });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed", error: error.message });
   }
 };
 
@@ -137,14 +137,14 @@ const clearCart = async (req, res) => {
     const userId = req.params.id;
     const cart = await Cart.findOne({ userId });
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ status:"failed", message: "Cart not found" });
     }
 
     cart.products = [];
     await cart.save();
-    res.status(200).json({ message: "Cart cleared", cart });
+    res.status(200).json({ status:"success",message: "Cart cleared", data: cart });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed", error: error.message });
   }
 };
 

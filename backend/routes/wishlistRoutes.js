@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const wishlistRouter = express.Router();
 const {
   addToWishlist,
   viewWishlist,
@@ -9,14 +9,14 @@ const {
 } = require("../controller/wishlistController");
 const auth = require("../middlewares/auth");
 
-router.use(auth);
+wishlistRouter.use(auth);
 
-router.route("/:id")
+wishlistRouter.route("/:id")
   .post(addToWishlist)
   .get(viewWishlist)
   .delete(removeFromWishlist);
-  
-router.post("/:id/addtocart", moveProductToCart);
-router.get("/:id/clear", clearWishlist);
 
-module.exports = router;
+  wishlistRouter.post("/:id/addtocart", moveProductToCart);
+  wishlistRouter.get("/:id/clear", clearWishlist);
+
+module.exports = wishlistRouter;

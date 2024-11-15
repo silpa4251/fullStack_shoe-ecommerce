@@ -5,11 +5,11 @@ const viewProfile = async (req, res) => {
     const userId = req.params.id;
     const profile = await Profile.findOne({ userId });
     if (!profile) {
-      return res.status(404).json({ message: "Profile not found" });
+      return res.status(404).json({ status:"failed", message: "Profile not found" });
     }
-    res.status(200).json(profile);
+    res.status(200).json({status:"success",data:profile});
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({status:"failed", error: error.message });
   }
 };
 
@@ -22,9 +22,9 @@ const editProfile = async (req, res) => {
       upsert: true,
     });
 
-    res.status(200).json({ message: "Profile updated successfully", profile });
+    res.status(200).json({  status:"success",message: "Profile updated successfully", data: profile });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({  status:"failed",error: error.message });
   }
 };
 

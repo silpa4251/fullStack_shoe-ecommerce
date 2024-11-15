@@ -5,11 +5,11 @@ const {
   getProductsById,
   getProductsByCategory,
 } = require("../controller/productController");
-const router = express.Router();
+const productRouter = express.Router();
 
-router.get("/search", searchProducts);
-router.get("/", getProducts);
-router.get("/:id", getProductsById);
-router.get("/category/:categoryname", getProductsByCategory);
+productRouter.get("/search", searchProducts);
+productRouter.get("/", getProducts);
+productRouter.get("/:id", getProductsById);
+productRouter.get("/category/:categoryname", getProductsByCategory);
 
-module.exports = router;
+module.exports = productRouter;

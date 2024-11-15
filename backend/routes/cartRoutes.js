@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const cartRouter = express.Router();
 const {
   addToCart,
   viewCart,
@@ -11,16 +11,16 @@ const {
 } = require("../controller/cartController");
 const auth = require("../middlewares/auth");
 
-router.use(auth);
+cartRouter.use(auth);
 
-router.route("/:id")
+cartRouter.route("/:id")
+  .get(viewCart)  
   .post(addToCart)
-  .get(viewCart)
   .delete(removeFromCart)
   .put(updateCartQuantity);
 
-router.get("/:id/totalprice", cartTotal);
-router.get("/:id/totalitems", totalProducts);
-router.get("/:id/clear", clearCart);
+  cartRouter.get("/:id/totalprice", cartTotal);
+  cartRouter.get("/:id/totalitems", totalProducts);
+  cartRouter.get("/:id/clear", clearCart);
 
-module.exports = router;
+module.exports = cartRouter;

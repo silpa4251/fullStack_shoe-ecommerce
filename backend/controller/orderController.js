@@ -12,7 +12,7 @@ const placeOrder = async (req, res) => {
       "price"
     );
     if (!cart || cart.products.length === 0) {
-      return res.status(400).json({ message: "Cart is empty" });
+      return res.status(400).json({ status:"failed",message: "Cart is empty" });
     }
 
     const calculatedTotalPrice = cart.products.reduce((total, item) => {
@@ -31,9 +31,9 @@ const placeOrder = async (req, res) => {
 
     await order.save();
     await Cart.findOneAndUpdate({ userId }, { $set: { products: [] } });
-    res.status(200).json({ message: "Order placed successfully", order });
+    res.status(200).json({ status:"success",message: "Order placed successfully", data:order });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed", error: error.message });
   }
 };
 
@@ -46,12 +46,12 @@ const getUserOrders = async (req, res) => {
     );
 
     if (orders.length === 0) {
-      return res.status(404).json({ message: "No orders found for this user" });
+      return res.status(404).json({ status:"failed", message: "No orders found for this user" });
     }
 
-    res.status(200).json({ orders });
+    res.status(200).json({ status:"failed",data: orders });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ status:"failed",error: error.message });
   }
 };
 
