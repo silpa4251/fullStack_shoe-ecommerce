@@ -1,58 +1,63 @@
 const Order = require("../models/orderModel");
-const Product = require("../models/productModel");
 const Cart = require("../models/cartModel");
+const asyncErroHandler = require("../utils/asyncErrorHandler");
 
-const placeOrder = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const { shippingAddress } = req.body;
+const placeOrder = asyncErroHandler(async (req, res) => {
+  const userId = req.params.id;
+  const { shippingAddress } = req.body;
 
-    const cart = await Cart.findOne({ userId }).populate(
-      "products.productId",
-      "price"
-    );
-    if (!cart || cart.products.length === 0) {
-      return res.status(400).json({ status:"failed",message: "Cart is empty" });
-    }
-
-    const calculatedTotalPrice = cart.products.reduce((total, item) => {
-      return total + item.quantity * item.productId.price;
-    }, 0);
-    
-    const orderId = `ORD-${new Date().getTime()}`;
-    const order = new Order({
-      userId,
-      products: cart.products,
-      totalPrice: calculatedTotalPrice,
-      totalItem: cart.products.reduce((sum, item) => sum + item.quantity, 0),
-      shippingAddress,
-      orderId,
-    });
-
-    await order.save();
-    await Cart.findOneAndUpdate({ userId }, { $set: { products: [] } });
-    res.status(200).json({ status:"success",message: "Order placed successfully", data:order });
-  } catch (error) {
-    res.status(500).json({ status:"failed", error: error.message });
+   // Fetch the user's cart
+  const cart = await Cart.findOne({ userId }).populate(
+    "products.productId",
+    "price"
+  );
+  if (!cart || cart.products.length === 0) {
+    throw new CustomError("Cart is empty", 400);
   }
-};
 
-const getUserOrders = async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const orders = await Order.find({ userId }).populate(
-      "products.productId",
-      "name price brand"
-    );
+   // Calculate the total price of the order
+  const calculatedTotalPrice = cart.products.reduce((total, item) => {
+    return total + item.quantity * item.productId.price;
+  }, 0);
+  
+  // Generate a unique order ID
+  const orderId = `ORD-${new Date().getTime()}`;
+  
+  // Create a new order
+  const order = new Order({
+    userId,
+    products: cart.products,
+    totalPrice: calculatedTotalPrice,
+    totalItem: cart.products.reduce((sum, item) => sum + item.quantity, 0),
+    shippingAddress,
+    orderId,
+  });
 
-    if (orders.length === 0) {
-      return res.status(404).json({ status:"failed", message: "No orders found for this user" });
-    }
+  await order.save();
 
-    res.status(200).json({ status:"failed",data: orders });
-  } catch (error) {
-    res.status(500).json({ status:"failed",error: error.message });
+  // Clear the user's cart after placing the order
+  await Cart.findOneAndUpdate({ userId }, { $set: { products: [] } });
+
+  // Send a success response
+  generateResponse(res, 200, "Order placed successfully", { order });
+ 
+});
+
+const getUserOrders = asyncErroHandler(async (req, res) => {
+  const userId = req.params.id;
+
+  // Fetch orders for the user
+  const orders = await Order.find({ userId }).populate(
+    "products.productId",
+    "name price brand"
+  );
+
+  if (orders.length === 0) {
+    throw new CustomError("No orders found for this user", 404);
   }
-};
+
+  // Send a success response with orders
+  generateResponse(res, 200, "User orders retrieved successfully", { orders });  
+});
 
 module.exports = { placeOrder, getUserOrders };
