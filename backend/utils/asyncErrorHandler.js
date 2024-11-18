@@ -1,5 +1,5 @@
-const asyncErroHandler = (fn) => (req, res, next) => {
+const asyncErrorHandler = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch((err) => next(err));
 };
 
-module.exports = asyncErroHandler;
+module.exports = asyncErrorHandler;

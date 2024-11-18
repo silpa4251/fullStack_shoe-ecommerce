@@ -1,10 +1,10 @@
 const Cart = require("../models/cartModel");
 const Product = require("../models/productModel");
-const asyncErroHandler = require("../utils/asyncErrorHandler");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const { generateResponse } = require("../utils/helpers");
 
-const addToCart = asyncErroHandler(async (req, res) => {
+const addToCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId, quantity } = req.body;
 
@@ -40,7 +40,7 @@ const addToCart = asyncErroHandler(async (req, res) => {
 });
 
 
-const viewCart = asyncErroHandler(async (req, res) => {
+const viewCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId }).populate(
     "products.productId",
@@ -52,7 +52,7 @@ const viewCart = asyncErroHandler(async (req, res) => {
   generateResponse(res,200, "Cart details", { cart });
 });
 
-const removeFromCart = asyncErroHandler(async (req, res) => {
+const removeFromCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId } = req.body;
   let cart = await Cart.findOne({ userId });
@@ -70,7 +70,7 @@ const removeFromCart = asyncErroHandler(async (req, res) => {
 });
 
 
-const updateCartQuantity = asyncErroHandler(async (req, res) => {
+const updateCartQuantity = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId, quantity } = req.body;
   if (quantity < 1) {
@@ -97,7 +97,7 @@ const updateCartQuantity = asyncErroHandler(async (req, res) => {
 });
 
 
-const cartTotal = asyncErroHandler( async (req, res) => {
+const cartTotal = asyncErrorHandler( async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId }).populate("products.productId");
 
@@ -114,7 +114,7 @@ const cartTotal = asyncErroHandler( async (req, res) => {
 });
 
 
-const totalProducts = asyncErroHandler(async (req, res) => {
+const totalProducts = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId });
   if (!cart) {
@@ -125,7 +125,7 @@ const totalProducts = asyncErroHandler(async (req, res) => {
 });
 
 
-const clearCart = asyncErroHandler( async (req, res) => {
+const clearCart = asyncErrorHandler( async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId });
   if (!cart) {

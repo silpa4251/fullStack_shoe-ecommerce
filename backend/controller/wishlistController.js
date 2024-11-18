@@ -1,13 +1,13 @@
 const Wishlist = require("../models/wishlistModel");
 const Product = require("../models/productModel");
 const Cart = require("../models/cartModel");
-const asyncErroHandler = require("../utils/asyncErrorHandler");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const { generateResponse } = require("../utils/helpers");
 const CustomError = require("../utils/customError");
 
 
 // Add or remove a product from the wishlist
-const addToWishlist = asyncErroHandler(async (req, res) => {
+const addToWishlist = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId } = req.body;
 
@@ -45,7 +45,7 @@ const addToWishlist = asyncErroHandler(async (req, res) => {
 
 
 // View wishlist
-const viewWishlist = asyncErroHandler(async (req, res) => {
+const viewWishlist = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const wishlist = await Wishlist.findOne({ userId }).populate(
     "products.productId",
@@ -61,7 +61,7 @@ const viewWishlist = asyncErroHandler(async (req, res) => {
 
 
 // Remove a specific product from the wishlist
-const removeFromWishlist = asyncErroHandler(async (req, res) => {
+const removeFromWishlist = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId } = req.body;
 
@@ -85,7 +85,7 @@ const removeFromWishlist = asyncErroHandler(async (req, res) => {
 
 
 // Move product from wishlist to cart
-const moveProductToCart = asyncErroHandler(async (req, res) => {
+const moveProductToCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId } = req.body;
 
@@ -133,7 +133,7 @@ const moveProductToCart = asyncErroHandler(async (req, res) => {
 
 
 // Clear all items from the wishlist
-const clearWishlist = asyncErroHandler(async (req, res) => {
+const clearWishlist = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const wishlist = await Wishlist.findOne({ userId });
   if (!wishlist) {

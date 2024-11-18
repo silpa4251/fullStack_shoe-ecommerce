@@ -1,10 +1,10 @@
 const Profile = require("../models/profileModel");
-const asyncErroHandler = require("../utils/asyncErrorHandler");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const { generateResponse } = require("../utils/helpers");
 
 // View user profile
-const viewProfile = asyncErroHandler(async (req, res) => {
+const viewProfile = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const profile = await Profile.findOne({ userId });
 
@@ -16,7 +16,7 @@ const viewProfile = asyncErroHandler(async (req, res) => {
 
 
 // Edit user profile
-const editProfile = asyncErroHandler(async (req, res) => {
+const editProfile = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const updatedData = req.body;
 

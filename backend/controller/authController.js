@@ -1,12 +1,12 @@
 const User = require("../models/userModel");
-const asyncErroHandler = require("../utils/asyncErrorHandler");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils/jwt");
 const {registerValidation,loginValidation,} = require("../validations/userValidations");
 const CustomError = require("../utils/customError");
 const { validateInput, generateResponse } = require("../utils/helpers");
 
-const register = asyncErroHandler(async (req, res) => {
+const register = asyncErrorHandler(async (req, res) => {
   //Check for error in joi validation 
   validateInput(registerValidation,req.body);
   const { username, email, password, role } = req.body;
@@ -25,7 +25,7 @@ const register = asyncErroHandler(async (req, res) => {
 });
 
 
-const login = asyncErroHandler(async (req, res) => {
+const login = asyncErrorHandler(async (req, res) => {
   //Check for error in joi validation 
   validateInput(loginValidation, req.body);
   const { email, password } = req.body;

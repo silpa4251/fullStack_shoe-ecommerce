@@ -1,16 +1,16 @@
 const Product = require("../models/productModel");
-const asyncErroHandler = require("../utils/asyncErrorHandler");
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const { generateResponse } = require("../utils/helpers");
 
 // Get all products
-const getProducts = asyncErroHandler(async (req, res) => {
+const getProducts = asyncErrorHandler(async (req, res) => {
   const products = await Product.find({});
   generateResponse(res, 200, "Products retrieved successfully", { products });
 });
 
 // Get product by ID
-const getProductsById = asyncErroHandler(async (req, res) => {
+const getProductsById = asyncErrorHandler(async (req, res) => {
   const productId = req.params.id;
   const product = await Product.findById(productId);
   if (!product) {
@@ -20,7 +20,7 @@ const getProductsById = asyncErroHandler(async (req, res) => {
 });
 
 // Get products by category
-const getProductsByCategory = asyncErroHandler(async (req, res) => {
+const getProductsByCategory = asyncErrorHandler(async (req, res) => {
   const { categoryname } = req.params;
 
   if (!categoryname) {
@@ -37,7 +37,7 @@ const getProductsByCategory = asyncErroHandler(async (req, res) => {
 });
 
 // Search for products
-const searchProducts = asyncErroHandler(async (req, res) => {
+const searchProducts = asyncErrorHandler(async (req, res) => {
   const { keyword } = req.query;
 
   if (!keyword) {
