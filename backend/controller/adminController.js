@@ -59,6 +59,87 @@ const unblockUser = asyncErrorHandler(async (req, res) => {
     generateResponse(res, 200, "User unblocked successfully", { user });
 });
   
+// Count the No.of users
+const getUserStats = asyncErrorHandler(async (req, res) => {
+    const userStats = await User.aggregate([
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          userCount: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+  
+    generateResponse(res, 200, "User registration stats retrieved successfully", { userStats });
+});
+
+// Top customers
+const getTopCustomers = asyncErrorHandler(async (req, res) => {
+    const topCustomers = await Order.aggregate([
+      {
+        $group: {
+          _id: "$userId", // Group by user
+          totalSpent: { $sum: "$totalPrice" },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      { $unwind: "$userDetails" },
+      {
+        $project: {
+          userName: "$userDetails.username",
+          email: "$userDetails.email",
+          totalSpent: 1,
+        },
+      },
+      { $sort: { totalSpent: -1 } }, // Sort by total spent (descending)
+      { $limit: 5 }, // Limit to top 5
+    ]);
+  
+    generateResponse(res, 200, "Top customers retrieved successfully", { topCustomers });
+});
+
+// Group the orders
+const getOrdersByStatus = asyncErrorHandler(async (req, res) => {
+    const ordersByStatus = await Order.aggregate([
+      {
+        $group: {
+          _id: "$status", // Group by status
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { count: -1 } }, // Sort by count
+    ]);
+  
+    generateResponse(res, 200, "Orders by status retrieved successfully", { ordersByStatus });
+});
+
+// Getting low stock products
+const getLowStockProducts = asyncErrorHandler(async (req, res) => {
+    const lowStockProducts = await Product.aggregate([
+      { $match: { quantity: { $lt: 10 } } },
+      {
+        $project: {
+          name: 1,
+          quantity: 1,
+          category: 1,
+        },
+      },
+    ]);
+    if (!lowStockProducts.length) {
+        throw new CustomError("No low stock products found", 404);
+    }
+  
+    generateResponse(res, 200, "Low stock products retrieved successfully", { lowStockProducts });
+});
+    
   
 // Add a product
 const addProduct = asyncErrorHandler(async (req, res) => {
@@ -106,25 +187,41 @@ const deleteProduct = asyncErrorHandler(async (req, res) => {
 
 // Calculare total products purchased 
 const getTotalProductsPurchased = asyncErrorHandler( async (req,res) => {
-    const orders = await Order.find({});
-    const totalProducts = orders.reduce((acc, order) =>acc + order.totalItem, 0)
-    generateResponse(res, 200, "Total products purchased counted", {totalProducts});
+    const result = await Order.aggregate([
+        { $unwind: "$products"},
+        {
+            $group:{
+                _id: null,
+                totalProducts: { $sum: "$products.quantity"},
+
+            },
+        },
+    ]);
+    const totalProducts = result.length ? result[0].totalProducts : 0;
+    generateResponse(res, 200, "Total products purchased counted", { totalProducts });
 
 })
 
 // Calculating the total revenue
 const getTotalRevenue = asyncErrorHandler(async (req, res) => {
-    const orders = await Order.find({});
-    const totalRevenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
+    const result = await Order.aggregate([
+        {
+            $group: {
+                _id: null,
+                totalRevenue: { $sum: "$totalPrice"},
+            },
+        },
+    ]);
+    const totalRevenue = result.length ? result[0].totalRevenue : 0;
     generateResponse(res, 200, "total revenue", {totalRevenue});
 });
 
 // Fetching all the orders
 const getOrderDetails = asyncErrorHandler(async (req, res) => {
     const orders = await Order.find({})
-        .populate("userId", "name email") // Populate user details
+        .populate("userId", "username email") // Populate user details
         .populate("products.productId", "name price brand"); // Populate product details
     generateResponse(res, 200, "order details", { orders });
 });
 
-module.exports = { getAllUsers, getUserById, addProduct, updateProduct, deleteProduct, getTotalProductsPurchased, getOrderDetails, getTotalRevenue, blockUser, unblockUser }
+module.exports = { getAllUsers, getUserById, addProduct, updateProduct, deleteProduct, getTotalProductsPurchased, getOrderDetails, getTotalRevenue, blockUser, unblockUser, getUserStats, getTopCustomers, getOrdersByStatus, getLowStockProducts}
