@@ -1,3 +1,6 @@
+const CustomError = require("../utils/customError");
+
+// Implementing authorization based on role
 const authorize = (roles = []) => {
     if (typeof roles === 'string') {
         roles = [roles];
@@ -5,7 +8,7 @@ const authorize = (roles = []) => {
 
     return (req, res, next) => {
         if (!roles.includes(req.user.role)) {
-            return res.status(403).json({ message: "Access denied" });
+            throw new CustomError("Access denied" , 403);
         }
         next();
     };

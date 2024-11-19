@@ -4,6 +4,8 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const { generateResponse } = require("../utils/helpers");
 
+
+// Adding products to cart
 const addToCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId, quantity } = req.body;
@@ -40,6 +42,7 @@ const addToCart = asyncErrorHandler(async (req, res) => {
 });
 
 
+// View the cart items
 const viewCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId }).populate(
@@ -52,6 +55,8 @@ const viewCart = asyncErrorHandler(async (req, res) => {
   generateResponse(res,200, "Cart details", { cart });
 });
 
+
+// Removing a product from the cart
 const removeFromCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId } = req.body;
@@ -69,7 +74,7 @@ const removeFromCart = asyncErrorHandler(async (req, res) => {
  
 });
 
-
+// Updating the product quantity
 const updateCartQuantity = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { productId, quantity } = req.body;
@@ -96,7 +101,7 @@ const updateCartQuantity = asyncErrorHandler(async (req, res) => {
   generateResponse(res,200,"Cart updated", {cart});
 });
 
-
+// viewing the total price of products in the cart
 const cartTotal = asyncErrorHandler( async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId }).populate("products.productId");
@@ -114,6 +119,7 @@ const cartTotal = asyncErrorHandler( async (req, res) => {
 });
 
 
+// Get the total products in the cart
 const totalProducts = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId });
@@ -125,6 +131,7 @@ const totalProducts = asyncErrorHandler(async (req, res) => {
 });
 
 
+// Clear the cart
 const clearCart = asyncErrorHandler( async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId });

@@ -1,5 +1,6 @@
 const Joi = require("joi");
 
+// Register data validator
 const registerValidation = (data) => {
   const schema = Joi.object({
     username: Joi.string().min(3).max(30).required(),
@@ -11,6 +12,7 @@ const registerValidation = (data) => {
   return schema.validate(data);
 };
 
+// Login user validator
 const loginValidation = (data) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),

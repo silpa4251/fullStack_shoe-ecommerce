@@ -1,19 +1,17 @@
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
+const CustomError = require("../utils/customError");
 const { verifyToken } = require("../utils/jwt");
 
-const auth = (req, res, next) => {
+// Authenication of users
+const auth = asyncErrorHandler((req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) {
-    return res.status(401).json({ message: "No token, authorization denied" });
+    throw new CustomError("No token, authorization denied", 401);
   }
-
-  try {
-    const decoded = verifyToken(token);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    console.error("Token verification failed:", error);
-    res.status(401).json({ message: "Invalid token" });
-  }
-};
+  const decoded = verifyToken(token);
+  req.user = decoded;
+  next();
+ 
+});
 
 module.exports = auth;

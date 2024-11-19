@@ -4,6 +4,8 @@ const asyncErrorHandler = require("../utils/asyncErrorHandler");
 const CustomError = require("../utils/customError");
 const { generateResponse } = require("../utils/helpers");
 
+
+// Placing an order
 const placeOrder = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const { shippingAddress } = req.body;
@@ -45,6 +47,8 @@ const placeOrder = asyncErrorHandler(async (req, res) => {
  
 });
 
+
+// fetching all orders of a specific user
 const getUserOrders = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
 

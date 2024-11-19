@@ -40,7 +40,7 @@ const blockUser = asyncErrorHandler(async (req, res) => {
     generateResponse(res, 200, "User blocked successfully", { user });
 });
 
-
+// Unblock a user
 const unblockUser = asyncErrorHandler(async (req, res) => {
     const userId = req.params.id;
   
@@ -104,6 +104,7 @@ const deleteProduct = asyncErrorHandler(async (req, res) => {
 
 })
 
+// Calculare total products purchased 
 const getTotalProductsPurchased = asyncErrorHandler( async (req,res) => {
     const orders = await Order.find({});
     const totalProducts = orders.reduce((acc, order) =>acc + order.totalItem, 0)
@@ -111,13 +112,14 @@ const getTotalProductsPurchased = asyncErrorHandler( async (req,res) => {
 
 })
 
+// Calculating the total revenue
 const getTotalRevenue = asyncErrorHandler(async (req, res) => {
     const orders = await Order.find({});
     const totalRevenue = orders.reduce((acc, order) => acc + order.totalPrice, 0);
     generateResponse(res, 200, "total revenue", {totalRevenue});
 });
 
-
+// Fetching all the orders
 const getOrderDetails = asyncErrorHandler(async (req, res) => {
     const orders = await Order.find({})
         .populate("userId", "name email") // Populate user details
@@ -125,4 +127,4 @@ const getOrderDetails = asyncErrorHandler(async (req, res) => {
     generateResponse(res, 200, "order details", { orders });
 });
 
-module.exports = { getAllUsers, getUserById, addProduct, updateProduct, deleteProduct, getTotalProductsPurchased, getOrderDetails, getTotalRevenue }
+module.exports = { getAllUsers, getUserById, addProduct, updateProduct, deleteProduct, getTotalProductsPurchased, getOrderDetails, getTotalRevenue, blockUser, unblockUser }

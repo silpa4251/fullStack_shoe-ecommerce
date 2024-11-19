@@ -6,6 +6,7 @@ const {registerValidation,loginValidation,} = require("../validations/userValida
 const CustomError = require("../utils/customError");
 const { validateInput, generateResponse } = require("../utils/helpers");
 
+// Registering a new user
 const register = asyncErrorHandler(async (req, res) => {
   //Check for error in joi validation 
   validateInput(registerValidation,req.body);
@@ -25,6 +26,7 @@ const register = asyncErrorHandler(async (req, res) => {
 });
 
 
+//Login a user
 const login = asyncErrorHandler(async (req, res) => {
   //Check for error in joi validation 
   validateInput(loginValidation, req.body);
