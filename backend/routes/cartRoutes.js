@@ -19,8 +19,8 @@ cartRouter.route("/:id")
   .delete(removeFromCart)
   .put(updateCartQuantity);
 
-  cartRouter.get("/:id/totalprice", cartTotal);
-  cartRouter.get("/:id/totalitems", totalProducts);
+  cartRouter.get("/:id/total-price", cartTotal);
+  cartRouter.get("/:id/total-items", totalProducts);
   cartRouter.get("/:id/clear", clearCart);
 
 module.exports = cartRouter;

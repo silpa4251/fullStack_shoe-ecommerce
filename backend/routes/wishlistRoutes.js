@@ -16,7 +16,7 @@ wishlistRouter.route("/:id")
   .get(viewWishlist)
   .delete(removeFromWishlist);
 
-  wishlistRouter.post("/:id/addtocart", moveProductToCart);
+  wishlistRouter.post("/:id/add-cart", moveProductToCart);
   wishlistRouter.get("/:id/clear", clearWishlist);
 
 module.exports = wishlistRouter;
