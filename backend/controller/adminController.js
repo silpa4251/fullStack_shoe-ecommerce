@@ -7,7 +7,15 @@ const { generateResponse } = require("../utils/helpers");
 
 // Get all users
 const getAllUsers = asyncErrorHandler(async (req, res) => {
-    const users = await User.find({});
+    const users = await User.aggregate([
+      {
+        $project: {
+            username: 1,
+            email: 1,
+            createdAt: 1,
+          }
+      }
+  ]);
     generateResponse(res, 200, "All users retrieved successfully", { users });
 });
 
@@ -105,42 +113,7 @@ const getTopCustomers = asyncErrorHandler(async (req, res) => {
   
     generateResponse(res, 200, "Top customers retrieved successfully", { topCustomers });
 });
-
-// Group the orders
-const getOrdersByStatus = asyncErrorHandler(async (req, res) => {
-    const ordersByStatus = await Order.aggregate([
-      {
-        $group: {
-          _id: "$status", // Group by status
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { count: -1 } }, // Sort by count
-    ]);
-  
-    generateResponse(res, 200, "Orders by status retrieved successfully", { ordersByStatus });
-});
-
-// Getting low stock products
-const getLowStockProducts = asyncErrorHandler(async (req, res) => {
-    const lowStockProducts = await Product.aggregate([
-      { $match: { quantity: { $lt: 10 } } },
-      {
-        $project: {
-          name: 1,
-          quantity: 1,
-          category: 1,
-        },
-      },
-    ]);
-    if (!lowStockProducts.length) {
-        throw new CustomError("No low stock products found", 404);
-    }
-  
-    generateResponse(res, 200, "Low stock products retrieved successfully", { lowStockProducts });
-});
-    
-  
+ 
 // Add a product
 const addProduct = asyncErrorHandler(async (req, res) => {
     const { name, category } = req.body;
@@ -224,4 +197,4 @@ const getOrderDetails = asyncErrorHandler(async (req, res) => {
     generateResponse(res, 200, "order details", { orders });
 });
 
-module.exports = { getAllUsers, getUserById, addProduct, updateProduct, deleteProduct, getTotalProductsPurchased, getOrderDetails, getTotalRevenue, blockUser, unblockUser, getUserStats, getTopCustomers, getOrdersByStatus, getLowStockProducts}
+module.exports = { getAllUsers, getUserById, addProduct, updateProduct, deleteProduct, getTotalProductsPurchased, getOrderDetails, getTotalRevenue, blockUser, unblockUser, getUserStats, getTopCustomers}

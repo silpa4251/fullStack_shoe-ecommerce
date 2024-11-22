@@ -23,7 +23,7 @@ adminRouter.route("/products/:id")
     .put(updateProduct)
     .delete(deleteProduct);
 
-adminRouter.get("/products/category/:category-name", getProductsByCategory);
+adminRouter.get("/products/category/:categoryname", getProductsByCategory);
 
 adminRouter.get("/stats/total-products", getTotalProductsPurchased);
 adminRouter.get("/stats/total-revenue", getTotalRevenue);
@@ -32,4 +32,4 @@ adminRouter.get("/stats/top-customers", getTopCustomers);
 
 adminRouter.get("/orders", getOrderDetails);
 
-module.exports = adminRouter;admi
+module.exports = adminRouter;
