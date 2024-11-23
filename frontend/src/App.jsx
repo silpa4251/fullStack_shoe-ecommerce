@@ -1,15 +1,23 @@
 
 
+import { lazy, Suspense } from 'react';
 import './App.css'
+import { Route, Routes } from 'react-router-dom';
+const Register = lazy(() => import("./pages/register"));
+const Login = lazy(() => import("./pages/login"));
+
 
 function App() {
   
 
   return (
     <>
-     <div className="flex items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold text-pink">Hello, Tailwind CSS!</h1>
-    </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path='/register' element={<Register /> } />
+          <Route path='/login' element={<Login /> } />
+        </Routes>
+      </Suspense>
     </>
   )
 }

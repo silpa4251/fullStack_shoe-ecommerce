@@ -28,7 +28,7 @@ export default {
           DEFAULT: ' #5B2333',
           dark: '#8B3A4F',
         },
-        red : '#D32F2F',
+        error : '#D32F2F',
       }
     },
   },
