@@ -118,7 +118,7 @@ const Register = () => {
             />
             <span
               onClick={togglePass}
-              className="absolute right-3 top-2 cursor-pointer"
+              className="absolute right-3 top-9 cursor-pointer"
             >
               {showPass ? <FaEye /> : <TbEyeClosed />}
             </span>
@@ -142,7 +142,7 @@ const Register = () => {
               onBlur={formik.handleBlur}
               value={formik.values.confirmPassword}
               placeholder="Confirm your Password"
- className="w-full p-2 bg-opacity-20 text-pink-dark bg-grey border-b-grey-dark rounded-md focus:ring-2 focus:ring-red-900 outline-none"
+              className="w-full p-2 bg-opacity-20 text-pink-dark bg-grey border-b-grey-dark rounded-md focus:ring-2 focus:ring-red-900 outline-none"
             />
             {formik.touched.confirmPassword &&
               formik.errors.confirmPassword && (

@@ -16,11 +16,13 @@ export default {
         pink: {
           DEFAULT: '#710117',
           light: '#8c021e',
+          medium: '#b94343',
           dark: '#7A1625',
         },
         grey: {
           DEFAULT: '#FAF8F3',
           light: '#ecd5bb',
+          medium: '#e0e0e0',
           dark: '#C4A484',
           darker: '#7C7367',
         },

@@ -87,7 +87,7 @@ const Login = () => {
             />
             <span
               onClick={togglePass}
-              className="absolute right-3 top-2 cursor-pointer"
+              className="absolute right-3 top-9 cursor-pointer"
             >
               {showPass ? <FaEye /> : <TbEyeClosed />}
             </span>
