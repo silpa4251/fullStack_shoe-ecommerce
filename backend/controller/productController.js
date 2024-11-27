@@ -18,6 +18,28 @@ const getProducts = asyncErrorHandler(async (req, res) => {
   generateResponse(res, 200, "Products retrieved successfully", { products });
 });
 
+
+// Get all featured products
+const getFeaturedProducts = asyncErrorHandler(async (req, res) => {
+  const products = await Product.aggregate([
+    {
+      $match: { featured: true }  // Match products where 'featured' is true
+    },
+    {
+      $project: {
+        name: 1,       
+        price: 1,      
+        brand: 1,      
+        image_url: 1,  
+      }
+    }
+  ]);
+
+  generateResponse(res, 200, "Featured products retrieved successfully", { products });
+});
+
+
+
 // Get product by ID
 const getProductsById = asyncErrorHandler(async (req, res) => {
   const productId = req.params.id;
@@ -71,6 +93,7 @@ const searchProducts = asyncErrorHandler(async (req, res) => {
 
 module.exports = {
   getProducts,
+  getFeaturedProducts,
   getProductsById,
   getProductsByCategory,
   searchProducts,

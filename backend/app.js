@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const errorHandler = require("./middlewares/errorHandler");
 const app = express();
 const authRoutes = require("./routes/authRoutes");
@@ -10,6 +11,9 @@ const orderRoutes = require("./routes/orderRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
 // Middlewares for parsing request body
+app.use(cors({
+    origin: 'http://localhost:5173'
+  }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

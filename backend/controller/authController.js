@@ -22,7 +22,7 @@ const register = asyncErrorHandler(async (req, res) => {
   await newuser.save();
 
   const token = generateToken(newuser._id, newuser.role);
-  generateResponse(res, 201, "User registered successfully", { token });
+  res.status(201).json({ status: "success", message: "User registered successfully", token})
 });
 
 
@@ -38,7 +38,7 @@ const login = asyncErrorHandler(async (req, res) => {
   }
 
   const token = generateToken(user._id, user.role);
-  generateResponse(res, 200, "Logged in successfully", { token });
+  res.status(200).json({ status: "success", message: "User logged in successfully", token})
 });
 
 module.exports = { register, login };
