@@ -1,4 +1,5 @@
-import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
+import endpoints from "../api/endpoints";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,6 +7,7 @@ import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { TbEyeClosed } from "react-icons/tb";
 import { toast } from "react-toastify";
+
 
 const Register = () => {
   const navigate = useNavigate();
@@ -38,10 +40,7 @@ const Register = () => {
         // eslint-disable-next-line no-unused-vars
         const {confirmPassword, ...dataToSend} = values;
       try {
-        const res = await axios.post(
-          "http://localhost:5000/api/users/register",
-          dataToSend
-        );
+        const res = await axiosInstance.post(endpoints.AUTH.REGISTER,dataToSend);
         if (res.status === 201) {
           toast.success("Registration successful!");
           localStorage.setItem("token", res.data.token);

@@ -2,8 +2,7 @@ import axios from "axios";
 
 
 const axiosInstance = axios.create({
-  // eslint-disable-next-line no-undef
-  baseURL: process.env.REACT_APP_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 1000,
   headers: {
     "Content-Type": "application/json",

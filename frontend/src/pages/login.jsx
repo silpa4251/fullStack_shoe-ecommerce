@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,9 +5,14 @@ import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { TbEyeClosed } from "react-icons/tb";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { login } from "../features/userSlice";
+import axiosInstance from "../api/axiosInstance";
+import endpoints from "../api/endpoints";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [showPass, setShowPass] = useState(false);
 
   const togglePass = () => {
@@ -28,10 +32,11 @@ const Login = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const res = await axios.post("http://localhost:5000/api/users/login", values);
+        const res = await axiosInstance.post(endpoints.AUTH.LOGIN, values);
         if (res.status === 200) {
           toast.success("Login successful!");
           localStorage.setItem("token", res.data.token); // Save the token to localStorage
+          dispatch(login(res.data.user));
           navigate("/"); // Redirect to the homepage or dashboard
         }
       } catch (error) {
