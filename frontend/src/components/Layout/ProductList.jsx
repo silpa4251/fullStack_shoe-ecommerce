@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
@@ -40,7 +41,7 @@ const ProductLists = ({ products }) => {
                 </Link>
                 <button
                   onClick={() => handleCart(product)}
-                  className="mt-4 py-2 px-4 product-btn font-semibold rounded-lg transition duration-300"
+                  className="mt-4 py-2 px-4 text-cream-pale bg-pink-light font-semibold rounded-lg transition duration-300 hover:bg-pink"
                 >
                   Add to Cart
                 </button>

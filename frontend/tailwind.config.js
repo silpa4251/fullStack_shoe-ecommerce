@@ -9,6 +9,7 @@ export default {
       colors: {
         cream:{
           DEFAULT:'#FDE5C3',
+          pale: '#ECD5BB',
           light: '#F9F3E6',
           medium: '#FAF8F3',
           dark: '#fff5e6'
@@ -18,6 +19,7 @@ export default {
           light: '#8c021e',
           medium: '#b94343',
           dark: '#7A1625',
+          darker: '#570213',
         },
         grey: {
           DEFAULT: '#FAF8F3',
@@ -28,6 +30,7 @@ export default {
         },
         violet: {
           DEFAULT: ' #5B2333',
+          pale: '#c0ad98',
           dark: '#8B3A4F',
         },
         error : '#D32F2F',

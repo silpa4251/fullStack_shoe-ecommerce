@@ -1,11 +1,11 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { TbEyeClosed } from "react-icons/tb";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../features/userSlice";
 import axiosInstance from "../api/axiosInstance";
 import endpoints from "../api/endpoints";
@@ -13,7 +13,16 @@ import endpoints from "../api/endpoints";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.user);
   const [showPass, setShowPass] = useState(false);
+
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
 
   const togglePass = () => {
     setShowPass(!showPass);
@@ -35,9 +44,8 @@ const Login = () => {
         const res = await axiosInstance.post(endpoints.AUTH.LOGIN, values);
         if (res.status === 200) {
           toast.success("Login successful!");
-          localStorage.setItem("token", res.data.token); // Save the token to localStorage
-          dispatch(login(res.data.user));
-          navigate("/"); // Redirect to the homepage or dashboard
+          dispatch(login(res.data));
+          navigate("/");
         }
       } catch (error) {
         if (error.response?.status === 401) {

@@ -8,24 +8,21 @@ import Featured from '../components/Products/Featured';
 
 const Home = () => {
   const dispatch = useDispatch();
-  const products = useSelector(selectProducts);
-  console.log("products from redux ", products);
-  const productStatus = useSelector((state) => state.products.status);
-  const error = useSelector((state) => state.products.error);
+  const { products, status, error } = useSelector((state) => state.products);
 
   useEffect(() => {
-    if (productStatus === 'idle') {
+    if (status === 'idle') {
         console.log("dispatching fetchproducts.....");
       dispatch(fetchProducts());
     }
-  }, [productStatus, dispatch]);
+  }, [status, dispatch]);
 
   let content;
-  if (productStatus === 'loading') {
+  if (status === 'loading') {
     content = <div className="text-center">Loading...</div>;
-  } else if (productStatus === 'succeeded') {
+  } else if (status === 'succeeded') {
     content = <ProductLists products={products || []} />;
-  } else if (productStatus === 'failed') {
+  } else if (status === 'failed') {
     content = <div className="text-center text-red-500">Error: {error}</div>;
   }
 

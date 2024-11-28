@@ -56,26 +56,26 @@ const Navbar = () => {
   return (
     <nav className="bg-white-800 p-4 sticky top-0 z-50 bg-white">
       <div className="mx-auto flex justify-between items-center">
-        <NavLink to="/" className="flex items-center text-xl font-bold" id="brand-name">
+        <NavLink to="/" className="text-pink flex items-center text-xl font-bold">
           <img src={logo} alt="logo" className="h-10 mr-2" />
           STEP WHISPER
         </NavLink>
         <div className="flex items-center space-x-4">
-          <div className="hidden md:flex relative search-input">
+          <div className="hidden md:flex relative text-pink">
             <form onSubmit={handleSearchSubmit} className="w-full">
               <input
                 type="search"
                 placeholder="Search for products..."
                 value={search}
                 onChange={handleSearch}
-                className="w-full max-w-xs px-4 py-2 border rounded-md searchbar"
+                className="w-full max-w-xs px-4 py-2 border rounded-md text-pink focus:outline-none focus:border-pink placeholder:text-pink"
               />
               <button
                 type="submit"
                 className="absolute right-3 top-2"
                 aria-label="Search"
               >
-                <IoSearch size={24} className="search-pic" />
+                <IoSearch size={24} className="text-pink" />
               </button>
             </form>
           </div>
@@ -83,7 +83,7 @@ const Navbar = () => {
           <div className="flex md:hidden items-center space-x-6">
             <div className="relative">
               <NavLink to="/wishlist">
-                <BsCalendarHeart size={20} className="cart-icon" />
+                <BsCalendarHeart size={20} className="text-pink" />
                 {isAuthenticated && wishlistCount > 0 && (
                   <span className="absolute bottom-3 left-5 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
                     {wishlistCount}
@@ -93,7 +93,7 @@ const Navbar = () => {
             </div>
             <div className="relative">
               <NavLink to="/cart">
-                <IoIosCart size={24} className="cart-icon" />
+                <IoIosCart size={24} className="text-pink" />
                 {isAuthenticated && cartCount > 0 && (
                   <span className="absolute bottom-3 left-5 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
                     {cartCount}
@@ -105,7 +105,7 @@ const Navbar = () => {
             {!isAuthenticated ? (
               <button
                 onClick={() => navigate("/login")}
-                className="block navitems px-3 py-2 login-btn"
+                className="block px-3 py-2 bg-pink text-cream-pale hover:bg-pink-darker hover:text-violet-pale"
               >
                 Login
               </button>
@@ -113,7 +113,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={handleLogoutClick}
-                  className="block navitems px-3 py-2 login-btn"
+                  className="block px-3 py-2  bg-pink text-cream-pale hover:bg-pink-darker hover:text-violet-pale"
                 >
                   Logout
                 </button>
@@ -124,33 +124,33 @@ const Navbar = () => {
             )}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden"
-              id="navbtn"
+              className="text-pink md:hidden"
+
             >
               {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
           </div>
 
           <div className="hidden md:flex space-x-4">
-            <NavLink to="/" className="navitems px-3 py-2 rounded">
+            <NavLink to="/" className=" text-pink hover:bg-cream-pale px-3 py-2 rounded">
               Home
             </NavLink>
             {["Men", "Women", "Kids"].map((item, id) => (
               <NavLink
                 key={id}
                 to={`/${item.toLowerCase()}`}
-                className="navitems px-3 py-2 rounded"
+                className=" text-pink hover:bg-cream-pale px-3 py-2 rounded"
               >
                 {item}
               </NavLink>
             ))}
             {user?.admin && (
-              <NavLink to="/admin" className="navitems px-3 py-2 rounded">
+              <NavLink to="/admin" className=" text-pink hover:bg-cream-pale px-3 py-2 rounded">
                 Admin Dashboard
               </NavLink>
             )}
             <NavLink to="/wishlist" className="relative">
-              <BsCalendarHeart size={20} className="cart-icon mt-2 navitems" />
+              <BsCalendarHeart size={20} className="mt-2  text-pink hover:bg-cream-pale" />
               {isAuthenticated && wishlistCount > 0 && (
                 <span className="absolute bottom-6 left-4 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
                   {wishlistCount}
@@ -158,7 +158,7 @@ const Navbar = () => {
               )}
             </NavLink>
             <NavLink to="/cart" className="relative">
-              <IoIosCart size={24} className="cart-icon mt-2 navitems" />
+              <IoIosCart size={24} className=" mt-2  text-pink hover:bg-cream-pale" />
               {isAuthenticated && cartCount > 0 && (
                 <span className="absolute bottom-6 left-4 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
                   {cartCount}
@@ -168,7 +168,7 @@ const Navbar = () => {
             {!isAuthenticated ? (
               <button
                 onClick={() => navigate("/login")}
-                className="navitems px-3 py-2 rounded login-btn"
+                className=" px-3 py-2 rounded  bg-pink text-cream-pale hover:bg-pink-darker hover:text-violet-pale"
               >
                 Login
               </button>
@@ -176,7 +176,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={handleLogoutClick}
-                  className="navitems px-3 py-2 rounded login-btn"
+                  className= "px-3 py-2 rounded  bg-pink text-cream-pale hover:bg-pink-darker hover:text-violet-pale"
                 >
                   Logout
                 </button>
@@ -191,28 +191,28 @@ const Navbar = () => {
 
       {isOpen && (
         <div className="md:hidden px-4 py-2">
-          <div className="relative search-input">
+          <div className="relative text-pink">
             <form onSubmit={handleSearchSubmit} className="relative w-full">
               <input
                 type="text"
                 placeholder="Search for products..."
                 value={search}
                 onChange={handleSearch}
-                className="w-full px-3 py-2 border rounded-md searchbar"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-pink placeholder:text-pink"
               />
               <button
                 type="submit"
                 className="absolute right-3 top-2"
                 aria-label="Search"
               >
-                <IoSearch size={24} className="text-gray-400 search-pic" />
+                <IoSearch size={24} className=" text-pink" />
               </button>
             </form>
           </div>
           <NavLink
             to="/"
             onClick={() => setIsOpen(false)}
-            className="block navitems px-3 py-2 navitems"
+            className="block px-3 py-2  text-pink hover:bg-cream-pale"
           >
             Home
           </NavLink>
@@ -221,7 +221,7 @@ const Navbar = () => {
               key={id}
               to={`/${item.toLowerCase()}`}
               onClick={() => setIsOpen(false)}
-              className="block navitems px-3 py-2 navitems"
+              className="block px-3 py-2  text-pink hover:bg-cream-pale"
             >
               {item}
             </NavLink>
@@ -229,7 +229,7 @@ const Navbar = () => {
           {user?.admin && (
             <NavLink
               to="/admin"
-              className="block navitems px-3 py-2 navitems"
+              className="block px-3 py-2  text-pink hover:bg-cream-pale"
             >
               Admin Dashboard
             </NavLink>
