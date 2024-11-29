@@ -38,7 +38,7 @@ const login = asyncErrorHandler(async (req, res) => {
   }
 
   const token = generateToken(user._id, user.role);
-  res.status(200).json({ status: "success", message: "User logged in successfully", token})
+  res.status(200).json({ status: "success", message: "User logged in successfully", token , user})
 });
 
 module.exports = { register, login };

@@ -8,7 +8,7 @@ const { generateResponse } = require("../utils/helpers");
 // Adding products to cart
 const addToCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
-  const { productId, quantity } = req.body;
+  const { productId, size, quantity } = req.body;
 
   // Check if the product exists
   const product = await Product.findById(productId);
@@ -22,18 +22,18 @@ const addToCart = asyncErrorHandler(async (req, res) => {
     // If no cart exists, create a new one
     cart = new Cart({
       userId,
-      products: [{ productId, quantity }],
+      products: [{ productId, size, quantity }],
     });
   } else {
     const existingProduct = cart.products.findIndex(
-      (item) => item.productId.toString() === productId
+      (item) => item.productId.toString() === productId && item.size === size
     );
   if (existingProduct !== -1) {
     // Update quantity if product exists in the cart
     cart.products[existingProduct].quantity += quantity;
   } else {
       // Add new product to the cart
-      cart.products.push({ productId, quantity });
+      cart.products.push({ productId, size, quantity });
     }
   }
     await cart.save();
@@ -47,7 +47,7 @@ const viewCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const cart = await Cart.findOne({ userId }).populate(
     "products.productId",
-    "name price brand"
+    "name price brand image_url"
   );
   if (!cart) {
     throw new CustomError("Cart not found" ,404);
@@ -59,7 +59,7 @@ const viewCart = asyncErrorHandler(async (req, res) => {
 // Removing a product from the cart
 const removeFromCart = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
-  const { productId } = req.body;
+  const { productId, size } = req.body;
   let cart = await Cart.findOne({ userId });
   if (!cart) {
     throw new CustomError("Cart not found", 404);
@@ -67,7 +67,7 @@ const removeFromCart = asyncErrorHandler(async (req, res) => {
 
   // Filter out the product to remove it from the cart
   cart.products = cart.products.filter(
-  (item) => item.productId.toString() !== productId
+  (item) => item.productId.toString() !== productId || item.size !== size
   );
   await cart.save();
   generateResponse(res,200,"Product removed from the cart");
