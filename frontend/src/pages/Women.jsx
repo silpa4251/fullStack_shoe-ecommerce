@@ -6,7 +6,7 @@ import ImageSlider from '../components/Products/ImageSlider';
 
 const Women = () => {
   const dispatch = useDispatch();
-  const { productByCategory, status, error } = useSelector((state) => state.products);
+  const { productsByCategory, status, error } = useSelector((state) => state.products);
 
   // Dispatch fetch request to get Women's shoes
   useEffect(() => {
@@ -25,7 +25,7 @@ const Women = () => {
     <div>
       <ImageSlider />
       <h1 className="text-2xl text-center font-semibold m-6 head-product">Women&apos;s Shoes</h1>
-      <ProductList products={productByCategory} />
+      <ProductList products={productsByCategory} />
     </div>
   );
 };

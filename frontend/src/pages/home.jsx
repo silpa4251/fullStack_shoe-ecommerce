@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts, selectProducts } from '../features/productSlice';
+import { fetchProducts } from '../features/productSlice';
 import ImageSlider from '../components/Products/ImageSlider';
 import ProductLists from '../components/Layout/ProductList';
 import Featured from '../components/Products/Featured';
