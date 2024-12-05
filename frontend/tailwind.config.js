@@ -29,9 +29,13 @@ export default {
           darker: '#7C7367',
         },
         violet: {
-          DEFAULT: ' #5B2333',
+          DEFAULT: '#5B2333',
           pale: '#c0ad98',
           dark: '#8B3A4F',
+        },
+        wine: {
+          DEFAULT: '#5B2333',
+          light: '#8B3A4F',
         },
         error : '#D32F2F',
       }

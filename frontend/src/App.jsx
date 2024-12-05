@@ -1,20 +1,35 @@
-import { lazy, Suspense } from 'react';
+// import { lazy, Suspense } from 'react';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './App.css'
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import PageNotFound from './pages/PageNotFound';
-const Home = lazy(() => import('./pages/home'));
-const Register = lazy(() => import("./pages/register"));
-const Login = lazy(() => import("./pages/login"));
-
-const Men = lazy(() => import("./pages/Men"));
-const Women = lazy(() => import("./pages/Women"));
-const Kids = lazy(() => import("./pages/Kids"));
-const SingleProduct = lazy(() => import("./components/Layout/SingleProduct"));
-
+import Home from './pages/home';
+import Register from './pages/register';
+import Login from './pages/login';
+import Men from './pages/Men';
+import Women from './pages/Women';
+import Kids from './pages/Kids';
+import SingleProduct from './components/Layout/SingleProduct';
+import Cart from './pages/cart';
+import CartProduct from './components/Cart/CartProduct';
+import CheckoutPage from './pages/checkoutPage';
+import WishList from './pages/wishlist';
+import Profile from './pages/profile';
+import AllProducts from './components/Admin/AllProducts';
+import AllUsers from './components/Admin/AllUsers';
+import AddProduct from './components/Admin/AddProduct';
+import EditProduct from './components/Admin/EditProduct';
+import ProtectedRoute from './routes/protectedRoutes';
+import AdminRoutes from './routes/adminRoutes';
+import UserDetails from './components/Admin/UserDetails';
+import Orders from './components/Admin/Orders';
+import OrderDetails from './components/Admin/OrderDetails';
+import Dashboard from './components/Admin/Dashboard';
+import Admin from './components/Admin/Admin';
+import { useSelector } from "react-redux";
 
 
 function App() {
@@ -22,8 +37,8 @@ function App() {
 
   return (
     <>
-    <Navbar />
-      <Suspense fallback={<div>Loading...</div>}>
+    <NavbarConditional />
+      {/* <Suspense fallback={<div>Loading...</div>}> */}
         <Routes>
         <Route path='/' element = {<Home />} />
           <Route path='/register' element={<Register /> } />
@@ -36,13 +51,49 @@ function App() {
           <Route path='/products' element={<Home/>}/>
           <Route path='/products/:id' element={<SingleProduct/>} />
 
+          <Route element={<ProtectedRoute />}>
+            <Route path='/cart' element={<Cart />} />
+            <Route path='/cartProducts' element={<CartProduct />} />
+            <Route path='/checkout' element={<CheckoutPage />} /> 
+            <Route path='/wishlist' element={<WishList />} /> 
+            <Route path='/profile' element={<Profile />} />
+          </Route>
+
+          <Route element={<AdminRoutes />}>
+            <Route path = '/admin' element={<Admin />} >
+            <Route index element={<Dashboard />} />
+            <Route path='dashboard' element={<Dashboard />} />
+            <Route path='users' element={<AllUsers />} />
+            <Route path='users/:id' element={<UserDetails />} />
+            <Route path='productlist' element={<AllProducts />} />
+            <Route path='productlist/:id' element={<EditProduct />} />
+            <Route path='add-product' element={<AddProduct />} />
+            <Route path='orders' element={<Orders />} />
+            <Route path='orders/:orderId' element={<OrderDetails />} />
+            </Route>
+          </Route>
+
           <Route path='*' element={<PageNotFound />} />
 
         </Routes>
-      </Suspense>
-      <Footer />
+      {/* </Suspense> */}
+      <FooterConditional />
     </>
   )
+}
+
+const NavbarConditional = () => {
+  const { admin } = useSelector((state) => state.user);
+  return !admin && <Navbar />;
+
+}
+
+const FooterConditional = () => {
+  const { admin } = useSelector((state) => state.user);
+  const location = useLocation();
+  const noFooter = ["/login","/register"];
+  return (!admin && !noFooter.includes(location.pathname)) && <Footer />;
+
 }
 
 export default App

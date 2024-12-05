@@ -5,6 +5,18 @@ import ProductList from '../components/Layout/ProductList';
 import ImageSlider from '../components/Products/ImageSlider';
 
 const Men = () => {
+  const token = localStorage.getItem("token");
+  const userData = JSON.parse(localStorage.getItem("user"));
+  const user = Array.isArray(userData) ? userData[0] : userData; // Parse user from localStorage
+  const { isAuthenticated } = useSelector((state) => state.user);
+  const isAdmin = token && user?.role === "admin";
+
+  console.log("Token:", token);
+  console.log("User:", user);
+  console.log("Is Admin:", isAdmin);
+  console.log("Is Authenticated:", isAuthenticated);
+
+
   const dispatch = useDispatch();
   const { productsByCategory, status, error } = useSelector((state) => state.products);
 
@@ -24,7 +36,7 @@ const Men = () => {
   return (
     <div>
       <ImageSlider />
-      <h1 className="text-2xl text-center font-semibold m-6 head-product">Men&apos;s Shoes</h1>
+      <h1 className="text-2xl text-center font-semibold m-6 text-pink">Men&apos;s Shoes</h1>
       <ProductList products={productsByCategory} />
     </div>
   );

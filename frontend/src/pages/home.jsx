@@ -30,7 +30,7 @@ const Home = () => {
     <>
       <ImageSlider />
       <Featured />
-      <h1 className="text-2xl text-center font-semibold mb-8 head-product" id="products">
+      <h1 className="text-2xl text-center font-semibold mb-8 text-pink" id="products">
         Our products
       </h1>
       {content}

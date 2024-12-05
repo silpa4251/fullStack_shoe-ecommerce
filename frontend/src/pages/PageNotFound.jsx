@@ -11,7 +11,7 @@ const PageNotFound = () => {
         <p className="text-lg text-gray-600 mb-8">
             It seems like the page you are looking for doesn&apos;t exist or has been moved.
         </p>
-        <Link to="/" className="inline-block px-6 py-3 rounded-lg shadow transition product-btn">
+        <Link to="/" className="inline-block px-6 py-3 text-grey-light bg-pink-light rounded-lg hover:bg-pink shadow transition ">
             Go Back Home
         </Link>
       </div>

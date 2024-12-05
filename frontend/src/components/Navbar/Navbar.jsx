@@ -3,11 +3,11 @@ import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
 import { IoIosCart } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
 import { BsCalendarHeart } from "react-icons/bs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/userSlice";
-import axios from "axios";
+import { totalItem, totalWish } from "../../utils/cartHelper";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,18 +15,21 @@ const Navbar = () => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const role = localStorage.getItem("role");
 
   const { isAuthenticated, user } = useSelector((state) => state.user);
+  const {cart} = useSelector((state) => state.cart);
+  const {wishlist} = useSelector((state) => state.wishlist);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
 
   // Fetch cart and wishlist counts on mount
-  useState(() => {
+  useEffect(() => {
     if (isAuthenticated) {
-      axios.get("/api/cart").then((res) => setCartCount(res.data.length));
-      axios.get("/api/wishlist").then((res) => setWishlistCount(res.data.length));
+      setCartCount(totalItem(cart));
+      setWishlistCount(totalWish(wishlist));
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, cart, wishlist]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -117,9 +120,7 @@ const Navbar = () => {
                 >
                   Logout
                 </button>
-                <NavLink to="/profile" className="hover:underline">
-                  <FaUserCircle size={30} className="text-gray-600" />
-                </NavLink>
+               <h2>welcome</h2>
               </div>
             )}
             <button
@@ -144,7 +145,7 @@ const Navbar = () => {
                 {item}
               </NavLink>
             ))}
-            {user?.admin && (
+            {role == "admin" && (
               <NavLink to="/admin" className=" text-pink hover:bg-cream-pale px-3 py-2 rounded">
                 Admin Dashboard
               </NavLink>

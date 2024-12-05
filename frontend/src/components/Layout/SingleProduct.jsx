@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProductById,
@@ -8,15 +8,21 @@ import {
 } from "../../features/productSlice";
 import { toast } from "react-toastify";
 import { addToCart } from "../../features/cartSlice";
+import getUserId from "../../utils/getUserId";
+import { toggleWishlistItem } from "../../features/wishlistSlice";
+import ProductLists from "./ProductList";
 
 const SingleProduct = () => {
   const { id } = useParams();
   const [selectedSize, setSelectedSize] = useState(null);
   const dispatch = useDispatch();
+  const userId = getUserId();
 
   const product = useSelector((state) => state.products.productById);
   const relatedProducts = useSelector(selectProductsByCategory) || [];
   const { status, error } = useSelector((state) => state.products);
+  const { wishlist } = useSelector((state) => state.wishlist);
+  const isInWishlist = wishlist.some((item) => item.productId === product?._id);
 
   useEffect(() => {
     if (id) {
@@ -37,8 +43,18 @@ const SingleProduct = () => {
     }
 
     if (product) {
-      dispatch(addToCart({ ...product, size: selectedSize, quantity: 1 }));
+      dispatch(addToCart({ userId, productId: product._id, size: selectedSize, quantity: 1 }));
+      toast.success(`${product.name} (Size: ${selectedSize}) added to cart!`);
     }
+  };
+
+  const handleWishlist = () => {
+    dispatch(toggleWishlistItem({ userId, productId: product._id }));
+    toast.success(
+      isInWishlist
+        ? `${product.name} removed from wishlist`
+        : `${product.name} added to wishlist`
+    );
   };
 
   if (status === "loading") {
@@ -54,18 +70,19 @@ const SingleProduct = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 md:p-12">
+    <div className="max-w-7xl mx-auto my-8 px-4">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row">
-        <div className="flex-shrink-0">
+        {/* Product Image */}
+        <div className="flex-shrink-0 w-full md:w-1/2 p-4">
           <img
             src={product?.image_url}
             alt={product?.name}
-            className="w-full h-64 object-cover md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-lg products-image"
+            className="w-full h-auto object-contain rounded-lg shadow-md"
           />
         </div>
-        <div className="p-6 flex-1">
+        {/* Product Details */}
+        <div className="flex-1 p-6">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">{product?.name}</h1>
-
           <p className="text-xl text-gray-600 mb-2">{product?.brand}</p>
           <div className="mb-4">
             <p className="text-xl text-gray-500 line-through">
@@ -98,52 +115,37 @@ const SingleProduct = () => {
 
           <p className="text-xl text-gray-600 mb-2">Warranty: {product?.warranty}</p>
           <p className="text-gray-600">{product?.additional_details}</p>
-          <button
-            onClick={handleCart}
-            className="py-2 px-4 rounded-lg product-btn transition duration-300"
-          >
-            Add to Cart
-          </button>
+
+          <div className="flex space-x-4 mt-4">
+            <button
+              onClick={handleCart}
+              disabled={!selectedSize}
+              className={`py-2 px-4 rounded-lg text-grey-light bg-pink-light hover:bg-pink transition duration-300 ${
+                !selectedSize ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Add to Cart
+            </button>
+            <button
+              onClick={handleWishlist}
+              className={`py-2 px-4 rounded-lg transition duration-300 ${
+                isInWishlist ? "bg-red-500 text-white" : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="mt-12 mx-4">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Similar Products</h2>
-        <div className="flex flex-wrap -mx-4">
-        {relatedProducts && relatedProducts.length > 0 ? (
-            relatedProducts.filter((relatedproduct) => relatedproduct._id !== product._id)
-            .map((relatedProduct) => (
-              <div
-                key={relatedProduct._id}
-                className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 px-4 mb-8"
-              >
-                <div className="bg-white p-4 rounded-lg shadow-lg flex flex-col items-center">
-                  <Link to={`/products/${relatedProduct._id}`}>
-                    <img
-                      src={relatedProduct?.image_url}
-                      alt={relatedProduct?.name}
-                      className="w-full h-48 object-contain mb-4 product-image"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-gray-800">
-                        {relatedProduct?.name}
-                      </h3>
-                      <p className="text-gray-600">Rs.{relatedProduct?.price}</p>
-                      <button
-                        onClick={() => dispatch(addToCart(relatedProduct))}
-                        className="py-2 px-4 rounded-lg product-btn transition duration-300"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p>No related products available.</p>
+      {/* Related Products Section */}
+      <div className="mt-12">
+        <h2 className="text-2xl text-center font-semibold m-6 text-pink">Similar Products</h2>
+        <ProductLists
+          products={relatedProducts.filter(
+            (relatedProduct) => relatedProduct._id !== product._id
           )}
-        </div>
+        />
       </div>
     </div>
   );

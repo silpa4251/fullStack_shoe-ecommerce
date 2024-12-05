@@ -13,10 +13,9 @@ export const fetchProducts = createAsyncThunk('products/fetchProducts', async ()
   }
 
   const response = await axiosInstance.get(endpoints.PRODUCTS.GET_ALL);
-  console.log("API Response:", response.data);
-  localStorage.setItem('products', JSON.stringify(response.data));
+  localStorage.setItem('products', JSON.stringify(response.data.data.products));
   localStorage.setItem('productsCacheTimestamp', Date.now());
-  return response.data;
+  return response.data.data.products;
 });
 
 // Fetch featured products
@@ -34,7 +33,6 @@ export const fetchProductsByCategory = createAsyncThunk('products/fetchProductsB
 // Fetch products by id
 export const fetchProductById = createAsyncThunk('products/productById', async (id) => {
   const response = await axiosInstance.get(endpoints.PRODUCTS.GET_SINGLE(id));
-  console.log("API Response for Product:", response.data.product);
 
   return response.data;
 });
@@ -43,6 +41,17 @@ export const fetchProductById = createAsyncThunk('products/productById', async (
 export const searchProducts = createAsyncThunk('products/searchProducts', async (keyword) => {
   const response = await axiosInstance.get(endpoints.PRODUCTS.SEARCH(keyword));
   return response.data;
+});
+
+export const addProduct = createAsyncThunk('products/addProduct', async (newProduct) => {
+  const response = await axiosInstance.post(endpoints.ADMIN.ADD_PRODUCT, newProduct);
+  console.log("addpro",response.data.data.newProduct);
+  return response.data.data.newProduct; // Return the added product
+});
+
+export const deleteProduct = createAsyncThunk('products/deleteProduct', async (id) => {
+  await axiosInstance.delete(endpoints.ADMIN.DELETE_PRODUCT(id));
+  return id;
 });
 
 
@@ -66,7 +75,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.products = action.payload.data.products; // Adjust based on API response
+        state.products = action.payload; // Adjust based on API response
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.status = 'failed';
@@ -112,6 +121,14 @@ const productSlice = createSlice({
         state.error = action.error.message;
       })
 
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        const id = action.payload;
+        state.products = state.products.filter((product) => product._id !== id);
+      })
+
+      .addCase(addProduct.fulfilled, (state, action) => {
+        state.products.push(action.payload); // Append the new product
+      })
 
       // Search products
       .addCase(searchProducts.pending, (state) => {

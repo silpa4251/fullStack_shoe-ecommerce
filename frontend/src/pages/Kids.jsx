@@ -24,7 +24,7 @@ const Kids = () => {
   return (
     <div>
       <ImageSlider />
-      <h1 className="text-2xl text-center font-semibold m-6 head-product">Kid&apos;s Shoes</h1>
+      <h1 className="text-2xl text-center font-semibold m-6 text-pink">Kid&apos;s Shoes</h1>
       <ProductList products={productsByCategory} />
     </div>
   );

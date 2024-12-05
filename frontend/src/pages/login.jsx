@@ -13,15 +13,20 @@ import endpoints from "../api/endpoints";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated, user, admin} = useSelector((state) => state.user);
   const [showPass, setShowPass] = useState(false);
 
 
   useEffect(() => {
     if (isAuthenticated) {
+      if(admin) {
+        navigate("/admin/dashboard",{replace: true});
+      } else {
       navigate('/', { replace: true });
-    }
-  }, [isAuthenticated, navigate]);
+      }
+    } 
+  }, [isAuthenticated,admin, navigate]);
+ 
 
 
   const togglePass = () => {
@@ -45,7 +50,6 @@ const Login = () => {
         if (res.status === 200) {
           toast.success("Login successful!");
           dispatch(login(res.data));
-          navigate("/");
         }
       } catch (error) {
         if (error.response?.status === 401) {
@@ -112,7 +116,7 @@ const Login = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-pink-light text-grey-light rounded-md font-semibold transition-colors duration-300 ease-in-out"
+            className="w-full py-2 px-4 bg-pink-light text-grey-light rounded-md font-semibold transition-colors duration-300 ease-in-out hover:bg-pink"
           >
             Login
           </button>
