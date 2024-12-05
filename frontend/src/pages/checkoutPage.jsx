@@ -3,36 +3,55 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { placeOrder } from "../features/orderSlice";
-import { clearCart } from "../features/cartSlice";
+import { clearCart, fetchCart } from "../features/cartSlice";
 import { totalItem, totalPrice } from "../utils/cartHelper";
+import getUserId from "../utils/getUserId";
+import { fetchProfile } from "../features/profileSlice";
 
 const CheckoutPage = () => {
-  const cart = useSelector((state) => state.cart); // Get cart items
-  const user = useSelector((state) => state.user); // Get user info
-  const { loading, currentOrder } = useSelector((state) => state.orders); // Get order state
+  const { cart } = useSelector((state) => state.cart); // Get cart items
+  const { profile } = useSelector((state) => state.profile); // Get user info
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  console.log('Cart State:', cart);
-  console.log('User State:', user);
-  
+  const userId = getUserId();
 
   const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
+  const [street, setStreet] = useState("");
+  const [city, setCity] = useState("");
   const [pincode, setPincode] = useState("");
   const [phone, setPhone] = useState("");
   const [state, setState] = useState("");
+  const [country, setCountry] = useState(""); // New field for country
+  const [landmark, setLandmark] = useState(""); // New field for landmark
   const [paymentMethod, setPaymentMethod] = useState("Credit Card");
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchCart(userId));
+    }
+  }, [dispatch, userId]);
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchProfile(userId));
+    }
+  }, [dispatch, userId]);
 
   // Populate fields with user info
   useEffect(() => {
-    if (user) {
-      
-      setName(user.username || "");
-      setAddress(user.address || "");
-      setPhone(user.phone || "");
+    if (profile && profile.userId) {
+      setName(profile.userId.username || "");
+      setStreet(profile.address.street || "");
+      setCity(profile.address.city || "");
+      setState(profile.address.state || "");
+      setPincode(profile.address.postalCode || "");
+      setPhone(profile.phone || "");
+      setCountry(profile.address.country || ""); // Set country from profile
+      setLandmark(profile.address.landmark || ""); // Set landmark from profile
+    } else {
+      console.log("Profile or profile.userId is not available");
     }
-  }, [user]);
+  }, [profile]);
 
   // Handle order submission
   const handleOrderSubmit = async (e) => {
@@ -45,16 +64,18 @@ const CheckoutPage = () => {
 
     const shippingAddress = {
       name,
-      address,
-      phone,
+      landmark, 
+      street,
+      city,
       state,
-      pincode,
+      postalCode:pincode,
+      phone,
+      country,
       paymentMethod,
     };
 
     try {
-      // Dispatch the `placeOrder` thunk
-      await dispatch(placeOrder({ userId: user.id, shippingAddress }));
+      await dispatch(placeOrder({ userId, shippingAddress }));
 
       toast.success("Order placed successfully!", {
         position: "top-center",
@@ -62,20 +83,12 @@ const CheckoutPage = () => {
       });
 
       dispatch(clearCart());
-      setTimeout(() => {
-        navigate("/");
-      }, 2500);
+      navigate("/"); // Redirect to the homepage after the order is placed
     } catch (error) {
       toast.error("Failed to place order. Please try again.");
+      console.error("Error placing order:", error);
     }
   };
-
-  // Redirect if the order was placed successfully
-  useEffect(() => {
-    if (currentOrder) {
-      navigate(`/orders/${currentOrder.orderId}`);
-    }
-  }, [currentOrder, navigate]);
 
   return (
     <div className="container mx-auto my-8 px-4">
@@ -96,11 +109,50 @@ const CheckoutPage = () => {
               />
             </div>
             <div className="mb-6">
-              <label className="block text-lg font-medium mb-2 text-gray-800">Address</label>
+              <label className="block text-lg font-medium mb-2 text-gray-800">Landmark</label>
               <input
                 type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                value={landmark}
+                onChange={(e) => setLandmark(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-lg"
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-lg font-medium mb-2 text-gray-800">Street</label>
+              <input
+                type="text"
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-lg"
+                required
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-lg font-medium mb-2 text-gray-800">City</label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-lg"
+                required
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-lg font-medium mb-2 text-gray-800">State</label>
+              <input
+                type="text"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-lg"
+                required
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-lg font-medium mb-2 text-gray-800">Pincode</label>
+              <input
+                type="text"
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value)}
                 className="w-full p-4 border border-gray-300 rounded-lg"
                 required
               />
@@ -115,28 +167,17 @@ const CheckoutPage = () => {
                 required
               />
             </div>
-            <div className="flex gap-4 mb-6">
-              <div className="w-1/2">
-                <label className="block text-lg font-medium mb-2 text-gray-800">State</label>
-                <input
-                  type="text"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  className="w-full p-4 border border-gray-300 rounded-lg"
-                  required
-                />
-              </div>
-              <div className="w-1/2">
-                <label className="block text-lg font-medium mb-2 text-gray-800">Pincode</label>
-                <input
-                  type="text"
-                  value={pincode}
-                  onChange={(e) => setPincode(e.target.value)}
-                  className="w-full p-4 border border-gray-300 rounded-lg"
-                  required
-                />
-              </div>
+            <div className="mb-6">
+              <label className="block text-lg font-medium mb-2 text-gray-800">Country</label>
+              <input
+                type="text"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="w-full p-4 border border-gray-300 rounded-lg"
+                required
+              />
             </div>
+           
             <div className="mb-6">
               <label className="block text-lg font-medium mb-2 text-gray-800">Payment Method</label>
               <select
@@ -152,6 +193,12 @@ const CheckoutPage = () => {
                 <option value="Cash on Delivery">Cash on Delivery</option>
               </select>
             </div>
+            <button
+              type="submit"
+              className="w-full text-grey-light bg-pink-light mt-6 font-semibold py-3 px-4 rounded-lg shadow-md"
+            >
+              Place Order
+            </button>
           </form>
         </div>
 
@@ -161,9 +208,9 @@ const CheckoutPage = () => {
           {cart.map((item, index) => (
             <div key={index} className="mb-4 flex items-center justify-between bg-cream-dark">
               <div className="flex items-center">
-                <img src={item.image_url} alt={item.name} className="w-16 h-16 object-cover rounded-md mr-4" />
+                <img src={item.productId.image_url} alt={item.productId.name} className="w-16 h-16 object-cover rounded-md mr-4" />
                 <div>
-                  <p className="text-lg font-medium">{item.name}</p>
+                  <p className="text-lg font-medium">{item.productId.name}</p>
                   <p className="text-gray-600">Size: {item.size}</p>
                   <p className="text-gray-600">Quantity: {item.quantity}</p>
                 </div>
@@ -175,14 +222,6 @@ const CheckoutPage = () => {
             <p className="text-lg text-right font-medium">Total Items: <span className="font-semibold text-pink">{totalItem(cart)}</span></p>
             <p className="text-lg text-right font-medium">Total Price: <span className="font-semibold text-pink">Rs.{totalPrice(cart).toFixed(2)}</span></p>
           </div>
-          <button
-            type="submit"
-            onClick={handleOrderSubmit}
-            className="w-full text-grey-light bg-pink-light mt-6 font-semibold py-3 px-4 rounded-lg shadow-md"
-            disabled={loading}
-          >
-            {loading ? "Placing Order..." : "Place Order"}
-          </button>
         </div>
       </div>
     </div>

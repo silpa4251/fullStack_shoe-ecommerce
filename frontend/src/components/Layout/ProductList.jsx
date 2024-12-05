@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
@@ -43,7 +44,6 @@ useEffect(() => {
 
   if (!Array.isArray(products)) {
     console.error("Invalid products array:", products);
-    return <div className="text-center">Invalid product data.</div>;
   }
 
   if (loading) {
@@ -52,21 +52,13 @@ useEffect(() => {
 
   if (error) {
     console.error("Error fetching wishlist:", error);
-    return (
-      <div className="text-center text-red-500">
-        Error: {error.message || "Something went wrong"}
-      </div>
-    );
   }
 
   const handleView = (product) => navigate(`/products/${product._id}`);
 
   const handleWishlist = (product) => {
     if (userId) {
-      dispatch(toggleWishlistItem({ userId, productId: product._id }))
-        .then(() => {
-          dispatch(fetchWishlist(userId)); // Ensure backend state is synced
-        });
+      dispatch(toggleWishlistItem({ userId, productId: product._id }));
     } else {
       if (tempWishlist.includes(product._id)) {
         setTempWishlist(tempWishlist.filter((id) => id !== product._id));
@@ -81,10 +73,9 @@ useEffect(() => {
     <div className="max-w-7xl mx-auto my-8 px-4">
       <div className="flex flex-wrap -mx-4">
         {products.map((product) => {
-          if (!product || typeof product !== "object") {
-            console.error("Invalid product object:", product);
-            return null;
-          }
+          // if (!product || typeof product !== "object") {
+          //   return null;
+          // }
 
           const isInWishlist = userId
   ? wishlist.some((item) => item?.productId?._id === product._id)
@@ -124,7 +115,7 @@ useEffect(() => {
                 </button>
               </div>
             </div>
-          );
+          );        
         })}
       </div>
     </div>

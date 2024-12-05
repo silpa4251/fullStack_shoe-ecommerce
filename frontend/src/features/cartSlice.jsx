@@ -13,11 +13,11 @@ export const addToCart = createAsyncThunk(
         { productId, size, quantity }
       );
 
-      const updatedCart = response.data.data.cart;
+      const updatedCart = response.data.data.cart.products;
       // const addedProduct = updatedCart.products.find(
       //   (item) => item.productId === productId
       // );
-
+console.log("updated cart",updatedCart)
       return updatedCart;
     } catch (error) {
       toast.error('Failed to add product to cart',{position: 'top-center', toastId: 'addcart', autoClose: 1000});

@@ -9,7 +9,7 @@ import {
 import { toast } from "react-toastify";
 import { addToCart } from "../../features/cartSlice";
 import getUserId from "../../utils/getUserId";
-import { toggleWishlistItem } from "../../features/wishlistSlice";
+// import { toggleWishlistItem } from "../../features/wishlistSlice";
 import ProductLists from "./ProductList";
 
 const SingleProduct = () => {
@@ -21,8 +21,6 @@ const SingleProduct = () => {
   const product = useSelector((state) => state.products.productById);
   const relatedProducts = useSelector(selectProductsByCategory) || [];
   const { status, error } = useSelector((state) => state.products);
-  const { wishlist } = useSelector((state) => state.wishlist);
-  const isInWishlist = wishlist.some((item) => item.productId === product?._id);
 
   useEffect(() => {
     if (id) {
@@ -44,18 +42,18 @@ const SingleProduct = () => {
 
     if (product) {
       dispatch(addToCart({ userId, productId: product._id, size: selectedSize, quantity: 1 }));
-      toast.success(`${product.name} (Size: ${selectedSize}) added to cart!`);
+      toast.success(`${product.name} (Size: ${selectedSize}) added to cart!`,{position: "top-center"});
     }
   };
 
-  const handleWishlist = () => {
-    dispatch(toggleWishlistItem({ userId, productId: product._id }));
-    toast.success(
-      isInWishlist
-        ? `${product.name} removed from wishlist`
-        : `${product.name} added to wishlist`
-    );
-  };
+  // const handleWishlist = () => {
+  //   dispatch(toggleWishlistItem({ userId, productId: product._id }));
+  //   toast.success(
+  //     isInWishlist
+  //       ? `${product.name} removed from wishlist`
+  //       : `${product.name} added to wishlist`
+  //   );
+  // };
 
   if (status === "loading") {
     return <p className="text-center text-lg text-gray-600">Loading...</p>;
@@ -126,14 +124,14 @@ const SingleProduct = () => {
             >
               Add to Cart
             </button>
-            <button
+            {/* <button
               onClick={handleWishlist}
               className={`py-2 px-4 rounded-lg transition duration-300 ${
                 isInWishlist ? "bg-red-500 text-white" : "bg-gray-200 text-gray-800"
               }`}
             >
               {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

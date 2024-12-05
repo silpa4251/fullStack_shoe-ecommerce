@@ -1,5 +1,5 @@
 import logo from "../../assets/logo.png";
-import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { IoIosCart } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
 import { BsCalendarHeart } from "react-icons/bs";
@@ -15,9 +15,9 @@ const Navbar = () => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const role = localStorage.getItem("role");
 
   const { isAuthenticated, user } = useSelector((state) => state.user);
+  const {profile } = useSelector((state) => state.profile);
   const {cart} = useSelector((state) => state.cart);
   const {wishlist} = useSelector((state) => state.wishlist);
   const [cartCount, setCartCount] = useState(0);
@@ -89,7 +89,7 @@ const Navbar = () => {
                 <BsCalendarHeart size={20} className="text-pink" />
                 {isAuthenticated && wishlistCount > 0 && (
                   <span className="absolute bottom-3 left-5 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                    {wishlistCount}
+                    {totalWish(wishlist)}
                   </span>
                 )}
               </NavLink>
@@ -99,7 +99,7 @@ const Navbar = () => {
                 <IoIosCart size={24} className="text-pink" />
                 {isAuthenticated && cartCount > 0 && (
                   <span className="absolute bottom-3 left-5 bg-red-600 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                    {cartCount}
+                    {totalItem(cart)}
                   </span>
                 )}
               </NavLink>
@@ -120,7 +120,10 @@ const Navbar = () => {
                 >
                   Logout
                 </button>
-               <h2>welcome</h2>
+                <NavLink to="/profile" className="hover:underline">
+                  <img src={profile.profileimg} alt="welcome"  className="w-10 h-10 rounded-full object-cover"/>
+                  {/* <FaUserCircle size={30}  className="text-gray-600"/> */}
+                </NavLink>
               </div>
             )}
             <button
@@ -145,11 +148,6 @@ const Navbar = () => {
                 {item}
               </NavLink>
             ))}
-            {role == "admin" && (
-              <NavLink to="/admin" className=" text-pink hover:bg-cream-pale px-3 py-2 rounded">
-                Admin Dashboard
-              </NavLink>
-            )}
             <NavLink to="/wishlist" className="relative">
               <BsCalendarHeart size={20} className="mt-2  text-pink hover:bg-cream-pale" />
               {isAuthenticated && wishlistCount > 0 && (
@@ -182,7 +180,8 @@ const Navbar = () => {
                   Logout
                 </button>
                 <NavLink to="/profile" className="hover:underline">
-                  <FaUserCircle size={30} className="text-gray-600" />
+                <img src={profile.profileimg} alt="welcome"  className="w-10 h-10 rounded-full object-cover"/>
+                  {/* <FaUserCircle size={30} className="text-gray-600" /> */}
                 </NavLink>
               </div>
             )}

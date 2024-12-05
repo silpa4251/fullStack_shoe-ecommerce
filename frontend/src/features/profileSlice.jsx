@@ -1,16 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { toast } from 'react-toastify';
-
-// Replace with your API URL
-const API_URL = 'http://localhost:5000/api';
+import axiosInstance from '../api/axiosInstance';
 
 // Fetch user profile
 export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async (userId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/profile/${userId}`);
+      const response = await axiosInstance.get(`/profile/${userId}`);
+      console.log("profile",response.data.data.profile);
       return response.data.data.profile;
     } catch (error) {
       toast.error('Failed to fetch profile', {
@@ -28,8 +26,8 @@ export const editProfile = createAsyncThunk(
   'profile/editProfile',
   async ({ userId, updatedData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `${API_URL}/profile/${userId}`,
+      const response = await axiosInstance.put(
+        `/profile/${userId}`,
         updatedData
       );
       toast.success('Profile updated successfully', {
@@ -57,7 +55,10 @@ const profileSlice = createSlice({
     error: null,
   },
   reducers: {
-    // You can add extra reducers if needed
+    setProfile: (state, action) => {
+      state.profile = action.payload; 
+    },
+
   },
   extraReducers: (builder) => {
     // Handle fetch profile
@@ -90,4 +91,7 @@ const profileSlice = createSlice({
   },
 });
 
+
+
+export const { setProfile} = profileSlice.actions;
 export default profileSlice.reducer;

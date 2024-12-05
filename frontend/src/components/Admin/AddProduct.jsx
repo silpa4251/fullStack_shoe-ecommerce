@@ -159,7 +159,7 @@ const AddProduct = () => {
           />
         </div>
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="block text-sm font-medium">Stars (out of 5)</label>
           <input
             type="number"
@@ -169,7 +169,7 @@ const AddProduct = () => {
             className="border rounded p-2 w-full"
             step="0.1"
           />
-        </div>
+        </div> */}
 
         <button type="submit" className="text-grey-light bg-pink-light px-4 py-2 rounded transition duration-200">
           Add Product

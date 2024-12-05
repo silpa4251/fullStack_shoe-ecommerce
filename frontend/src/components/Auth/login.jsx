@@ -6,9 +6,9 @@ import { FaEye } from "react-icons/fa";
 import { TbEyeClosed } from "react-icons/tb";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../features/userSlice";
-import axiosInstance from "../api/axiosInstance";
-import endpoints from "../api/endpoints";
+import { login } from "../../features/userSlice";
+import axiosInstance from "../../api/axiosInstance";
+import endpoints from "../../api/endpoints";
 
 const Login = () => {
   const navigate = useNavigate();
