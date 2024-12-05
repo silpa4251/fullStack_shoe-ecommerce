@@ -4,10 +4,11 @@ const {
   addToCart,
   viewCart,
   removeFromCart,
-  updateCartQuantity,
   cartTotal,
   totalProducts,
   clearCart,
+  increaseQuantity,
+  decreaseQuantity,
 } = require("../controller/cartController");
 const auth = require("../middlewares/auth");
 
@@ -15,9 +16,13 @@ cartRouter.use(auth);
 
 cartRouter.route("/:id")
   .get(viewCart)  
-  .post(addToCart)
-  .delete(removeFromCart)
-  .put(updateCartQuantity);
+  .post(addToCart);
+  // .delete(removeFromCart);
+  // .put(updateCartQuantity);
+   
+  cartRouter.patch("/:userId/increase", increaseQuantity);
+  cartRouter.patch("/:userId/decrease", decreaseQuantity);
+  cartRouter.delete("/:userId/remove/:productId/:size", removeFromCart);
 
   cartRouter.get("/:id/total-price", cartTotal);
   cartRouter.get("/:id/total-items", totalProducts);

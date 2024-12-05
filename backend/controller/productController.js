@@ -5,16 +5,10 @@ const { generateResponse } = require("../utils/helpers");
 
 // Get all products
 const getProducts = asyncErrorHandler(async (req, res) => {
-  const products = await Product.aggregate([
-    {
-      $project: {
-          name: 1,
-          price: 1,
-          brand: 1,
-          image_url: 1,
-        }
-    }
-]);
+  const products = await  Product.find(
+    { isDeleted: {$ne: true} }, // Filter condition
+    { name: 1, price: 1, brand: 1, image_url: 1, isDeleted: 1 } // Fields to include
+  );
   generateResponse(res, 200, "Products retrieved successfully", { products });
 });
 

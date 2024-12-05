@@ -42,7 +42,6 @@ const productSchema = mongoose.Schema(
     },
     stars: {
       type: Number,
-      required: true,
       min: 0,
       max: 5,
     },

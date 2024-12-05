@@ -24,9 +24,6 @@ const placeOrder = asyncErrorHandler(async (req, res) => {
     return total + item.quantity * item.productId.price;
   }, 0);
   
-  // Generate a unique order ID
-  const orderId = `ORD-${new Date().getTime()}`;
-  
   // Create a new order
   const order = new Order({
     userId,
@@ -34,7 +31,6 @@ const placeOrder = asyncErrorHandler(async (req, res) => {
     totalPrice: calculatedTotalPrice,
     totalItem: cart.products.reduce((sum, item) => sum + item.quantity, 0),
     shippingAddress,
-    orderId,
   });
 
   await order.save();
@@ -66,4 +62,23 @@ const getUserOrders = asyncErrorHandler(async (req, res) => {
   generateResponse(res, 200, "User orders retrieved successfully", { orders });  
 });
 
-module.exports = { placeOrder, getUserOrders };
+// Fetch a specific order by orderId
+const getOrderDetails = asyncErrorHandler(async (req, res) => {
+  const { orderId } = req.params;
+
+  const order = await Order.findOne({ orderId }).populate(
+    "products.productId",
+    "name price brand image"
+  );
+
+  if (!order) {
+    throw new CustomError("Order not found", 404);
+  }
+
+  generateResponse(res, 200, "Order details retrieved successfully", { order });
+});
+
+
+
+
+module.exports = { placeOrder, getUserOrders, getOrderDetails };

@@ -22,24 +22,30 @@ const addToWishlist = asyncErrorHandler(async (req, res) => {
       userId,
       products: [{ productId }],
     });
-    await wishlist.save();
-    return generateResponse(res, 200, "Product added to wishlist", { wishlist });
-  }
-
-  const existingProductIndex = wishlist.products.findIndex(
-    (item) => item.productId.toString() === productId
+    // await wishlist.save();
+    // return generateResponse(res, 200, "Product added to wishlist", { wishlist });
+  } else {
+    
+    const existingProductIndex = wishlist.products.findIndex(
+    (item) => item.productId.equals(productId)
   );
 
   if (existingProductIndex !== -1) {
     wishlist.products.splice(existingProductIndex, 1);
-    await wishlist.save();
-    return generateResponse(res, 200, "Product removed from wishlist", { wishlist });
+    // await wishlist.save();
+    // return generateResponse(res, 200, "Product removed from wishlist", { wishlist });
   } 
   else {
     wishlist.products.push({ productId });
-    await wishlist.save();
-    return generateResponse(res, 200, "Product added to wishlist", { wishlist });
   }
+}
+    await wishlist.save();
+    wishlist = await Wishlist.findOne({ userId }).populate(
+      "products.productId",
+      "name price brand image_url"
+    );
+    return generateResponse(res, 200, "Product added to wishlist", { wishlist });
+  
 });
 
 
@@ -49,7 +55,7 @@ const viewWishlist = asyncErrorHandler(async (req, res) => {
   const userId = req.params.id;
   const wishlist = await Wishlist.findOne({ userId }).populate(
     "products.productId",
-    "name price brand"
+    "name price brand image_url"
   );
 
   if (!wishlist) {
@@ -72,7 +78,7 @@ const removeFromWishlist = asyncErrorHandler(async (req, res) => {
 
   const initialLength = wishlist.products.length;
   wishlist.products = wishlist.products.filter(
-    (item) => item.productId.toString() !== productId
+    (item) => !item.productId.equals(productId)
   );
 
   if (wishlist.products.length === initialLength) {
@@ -80,7 +86,11 @@ const removeFromWishlist = asyncErrorHandler(async (req, res) => {
   }
 
   await wishlist.save();
-  generateResponse(res, 200, "Product removed from wishlist");
+  wishlist = await Wishlist.findOne({ userId }).populate(
+    "products.productId",
+    "name price brand image_url"
+  );
+  return res.status(200).json({ message: 'Product removed from wishlist', data: wishlist });
 });
 
 

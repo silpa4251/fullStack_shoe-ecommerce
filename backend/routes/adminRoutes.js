@@ -1,9 +1,8 @@
 const express = require("express");
 const auth = require("../middlewares/auth");
 const authorize = require("../middlewares/authorize");
-const { getAllUsers, getUserById, addProduct, deleteProduct, updateProduct, getTotalProductsPurchased, getTotalRevenue, getOrderDetails, blockUser, unblockUser, getUserStats, getTopCustomers, getOrdersByStatus, getLowStockProducts } = require("../controller/adminController");
+const { getAllUsers, getUserById, addProduct, deleteProduct, updateProduct, getTotalProductsPurchased, getTotalRevenue, getOrderDetails, blockUser, unblockUser, getUserStats, getTopCustomers, getOrdersByStatus, getLowStockProducts, getTotalProducts, getTotalOrders } = require("../controller/adminController");
 const { getProducts, getProductsById, getProductsByCategory } = require("../controller/productController");
-const { getUserOrders } = require("../controller/orderController");
 const adminRouter = express.Router();
 
 adminRouter.use(auth);
@@ -25,11 +24,14 @@ adminRouter.route("/products/:id")
 
 adminRouter.get("/products/category/:categoryname", getProductsByCategory);
 
-adminRouter.get("/stats/total-products", getTotalProductsPurchased);
+adminRouter.get("/stats/total-purchased-products", getTotalProductsPurchased);
 adminRouter.get("/stats/total-revenue", getTotalRevenue);
 adminRouter.get("/stats/total-users", getUserStats);
+adminRouter.get("/stats/total-orders", getTotalOrders);
+
 adminRouter.get("/stats/top-customers", getTopCustomers);
 
 adminRouter.get("/orders", getOrderDetails);
+adminRouter.get("/orders/:orderId", getOrderDetails);
 
 module.exports = adminRouter;

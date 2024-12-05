@@ -12,6 +12,7 @@ const getAllUsers = asyncErrorHandler(async (req, res) => {
         $project: {
             username: 1,
             email: 1,
+            role: 1,
             createdAt: 1,
           }
       }
@@ -42,10 +43,13 @@ const blockUser = asyncErrorHandler(async (req, res) => {
       throw new CustomError("User is already blocked", 400);
     }
   
-    user.isBlocked = true;
-    await user.save();
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { isBlocked: true }, // Set isBlocked to true
+      { new: true } // Return the updated user object
+    );
   
-    generateResponse(res, 200, "User blocked successfully", { user });
+    generateResponse(res, 200, "User blocked successfully", { user: updatedUser });
 });
 
 // Unblock a user
@@ -61,10 +65,13 @@ const unblockUser = asyncErrorHandler(async (req, res) => {
       throw new CustomError("User is not blocked", 400);
     }
   
-    user.isBlocked = false;
-    await user.save();
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { isBlocked: false }, // Set isBlocked to false
+      { new: true } // Return the updated user object
+    );
   
-    generateResponse(res, 200, "User unblocked successfully", { user });
+    generateResponse(res, 200, "User unblocked successfully", { user: updatedUser });
 });
   
 // Count the No.of users
@@ -107,8 +114,8 @@ const getTopCustomers = asyncErrorHandler(async (req, res) => {
           totalSpent: 1,
         },
       },
-      { $sort: { totalSpent: -1 } }, // Sort by total spent (descending)
-      { $limit: 5 }, // Limit to top 5
+      { $sort: { totalSpent: -1 } }, 
+      { $limit: 5 }, 
     ]);
   
     generateResponse(res, 200, "Top customers retrieved successfully", { topCustomers });
@@ -189,6 +196,22 @@ const getTotalRevenue = asyncErrorHandler(async (req, res) => {
     generateResponse(res, 200, "total revenue", {totalRevenue});
 });
 
+//Calculate total orders
+const getTotalOrders = asyncErrorHandler( async (req,res) => {
+  const orderStats = await Order.aggregate([
+      {
+          $group:{
+              _id: null,
+              totalOrders: { $sum: 1},
+
+          },
+      },
+  ]);
+
+  generateResponse(res, 200, "Total orders counted", { orderStats });
+
+})
+
 // Fetching all the orders
 const getOrderDetails = asyncErrorHandler(async (req, res) => {
     const orders = await Order.find({})
@@ -197,4 +220,4 @@ const getOrderDetails = asyncErrorHandler(async (req, res) => {
     generateResponse(res, 200, "order details", { orders });
 });
 
-module.exports = { getAllUsers, getUserById, addProduct, updateProduct, deleteProduct, getTotalProductsPurchased, getOrderDetails, getTotalRevenue, blockUser, unblockUser, getUserStats, getTopCustomers}
+module.exports = { getAllUsers, getUserById, addProduct, updateProduct, deleteProduct, getTotalProductsPurchased, getTotalOrders, getOrderDetails, getTotalRevenue, blockUser, unblockUser, getUserStats, getTopCustomers}

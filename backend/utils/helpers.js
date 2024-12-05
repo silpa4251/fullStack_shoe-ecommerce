@@ -9,7 +9,7 @@ const validateInput = (validationFn, data) => {
 
 //Helper function for generating successfull response
 const generateResponse = (res, statusCode, message, data = {}) => {
-    res.status(statusCode).json({ status: "success", message,data:{ ...data }});
+    res.status(statusCode).json({ status: "success", message,data:{...data }});
 };
 
 module.exports = { validateInput, generateResponse };
