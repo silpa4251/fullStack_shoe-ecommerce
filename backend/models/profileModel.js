@@ -5,9 +5,6 @@ const profileSchema = new mongoose.Schema({
   profileimg: {
     type: String,
   },
-  phone: {
-    type: String,
-  },
   address: {
     street: {
       type: String,
